@@ -236,6 +236,87 @@
     <script !src="">
 
         $(document).ready(function () {
+            // Ensure CSRF token headers are present for AJAX requests
+            (function(){
+                var metaToken = $('meta[name="csrf-token"]').attr('content') || null;
+                var xsrfCookie = (function(){
+                    var m = document.cookie.match(/XSRF-TOKEN=([^;]+)/);
+                    return m ? decodeURIComponent(m[1]) : null;
+                })();
+                var csrfHeaders = {};
+                if (metaToken) csrfHeaders['X-CSRF-TOKEN'] = metaToken;
+                if (xsrfCookie) csrfHeaders['X-XSRF-TOKEN'] = xsrfCookie;
+                if (Object.keys(csrfHeaders).length) {
+                    $.ajaxSetup({ headers: csrfHeaders });
+                }
+            })();
+
+            // Patao stores prefetch utilities
+            window.pataoStores = window.pataoStores || null;
+            window.pataoStoresFetched = window.pataoStoresFetched || false;
+            function extractPataoStores(res){
+                var list = [];
+                if (res && res.ok && res.data) {
+                    var d = res.data.data;
+                    if (Array.isArray(d)) {
+                        list = d;
+                    } else if (d && Array.isArray(d.data)) {
+                        list = d.data;
+                    } else if (d && d.data && !Array.isArray(d.data) && typeof d.data === 'object') {
+                        list = [d.data];
+                    } else if (Array.isArray(res.data.data)) {
+                        list = res.data.data;
+                    } else if (res.data.data && typeof res.data.data === 'object') {
+                        list = [res.data.data];
+                    } else if (d && Array.isArray(d.items)) {
+                        list = d.items;
+                    } else if (d && d.items && typeof d.items === 'object') {
+                        list = [d.items];
+                    }
+                }
+                return list;
+            }
+            function filterActiveStores(list){
+                return Array.isArray(list) ? list.filter(function(st){
+                    return st && (st.is_active === true || st.is_active === 1 || st.is_active === '1');
+                }) : [];
+            }
+            function prefetchPataoStores(){
+                if (window.pataoStoresFetched) return;
+                $.get(window.location.origin + '/admin/patao/stores', function(res){
+                    var list = extractPataoStores(res);
+                    var active = filterActiveStores(list);
+                    window.pataoStores = active;
+                    window.pataoStoresFetched = true;
+                });
+            }
+            prefetchPataoStores();
+            function pataoIsOk(res){
+                var r = res || {};
+                if (r.ok === true) return true;
+                if (r.status === 'success') return true;
+                var d = r.data || {};
+                if (typeof r.code === 'number') return r.code === 200;
+                if (typeof d.code === 'number') return d.code === 200;
+                if (d.order_status) return true;
+                return false;
+            }
+            function pataoMessage(res, fallback){
+                if (res && res.data && res.data.message) return res.data.message;
+                if (res && res.message) return res.message;
+                return fallback || 'Order Created Successfully';
+            }
+            function showSuccessNotification(msg){
+                Swal.fire({ icon: 'success', title: 'Sent', text: msg, timer: 2000, showConfirmButton: false });
+                if (window.toastr && typeof toastr.success === 'function') { toastr.success(msg); }
+            }
+            function showErrorNotification(msg){
+                Swal.fire({ icon: 'error', title: 'Failed', text: msg });
+                if (window.toastr && typeof toastr.error === 'function') { toastr.error(msg); }
+            }
+            function reloadOrdersTable(){
+                if (table && table.ajax) { table.ajax.reload(null, false); }
+            }
             var table = $("#orderTable").DataTable({
                 ajax: {
                     url:"{{url('admin/order/show')}}?status=" + $('#orderTable').attr('data-status'),
@@ -244,6 +325,7 @@
                 processing: true,
                 serverSide: true,
                 pageLength: 50,
+                rowId: "id",
                 columnDefs: [
                     {
                         targets: 0,
@@ -537,7 +619,244 @@
                     ids[index] = rowId;
                 });
                 var status = $(this).attr('data-status');
-                 $.ajax({
+
+                if (status === 'send-with-patao') {
+                    if (ids.length === 0) {
+                        Swal.fire('Please select one order to send with Patao');
+                        return;
+                    }
+                    if (ids.length > 1) {
+                        Swal.fire('Please select only one order for Patao send');
+                        return;
+                    }
+
+                    var id = ids[0];
+                    var rowData = null;
+                    // Try to find row data by rowId first
+                    var row = table.row('#' + id);
+                    if (row && row.data()) {
+                        rowData = row.data();
+                    } else {
+                        // Fallback: search all rows
+                        table.rows().every(function(){
+                            var d = this.data();
+                            if (d && (d.id == id)) { rowData = d; return false; }
+                        });
+                    }
+                    rowData = rowData || {};
+
+                    function stripHtmlWithBreaks(html){
+                        var text = (html || '').replace(/<br\s*\/\?\s*>/gi, '\n').replace(/<[^>]+>/g, '');
+                        return text;
+                    }
+
+                    var invoiceText = stripHtmlWithBreaks(rowData.invoice);
+                    var invoiceParts = (invoiceText || '').split('\n');
+                    var merchantOrderId = (invoiceParts[0] || '').trim();
+
+                    var customerText = stripHtmlWithBreaks(rowData.customerInfo);
+                    var customerParts = (customerText || '').split('\n');
+                    var recipientName = (customerParts[0] || '').trim();
+                    var recipientPhone = (customerParts[1] || '').trim();
+                    var recipientAddress = (customerParts.slice(2).join(' ') || '').trim();
+
+                    var amountToCollect = (rowData.subTotal || '').toString().replace(/[^0-9.]/g, '');
+                    var itemDescription = 'this is a Cloth item, price- ' + (amountToCollect || '');
+
+                    function buildStoreOptionsHtml(list){
+                        var filtered = filterActiveStores(list);
+                        if (!Array.isArray(filtered) || filtered.length === 0) {
+                            return '<option value="">No active stores found</option>';
+                        }
+                        var defaultFound = false;
+                        var options = filtered.map(function(st){
+                            var sid = st.store_id || st.id || '';
+                            var name = st.store_name || st.name || 'Unnamed';
+                            var addr = st.store_address || '';
+                            var isDefault = (st.is_default_store === true || st.is_default_store === 1 || st.is_default_store === '1');
+                            var selectedAttr = '';
+                            if (isDefault && !defaultFound) { selectedAttr = ' selected'; defaultFound = true; }
+                            return '<option value="' + sid + '"' + selectedAttr + '>' + name + (addr ? ' — ' + addr : '') + '</option>';
+                        }).join('');
+                        var placeholder = defaultFound ? '<option value="" disabled>Select Store</option>' : '<option value="" disabled selected>Select Store</option>';
+                        return placeholder + options;
+                    }
+
+                    var formHtml = ''
+                        + '<div class="text-left">'
+                        + '  <div class="form-group">'
+                        + '    <label>Store</label>'
+                        + '    <select id="patao-store" class="form-control">' + (window.pataoStoresFetched ? buildStoreOptionsHtml(window.pataoStores) : '<option value="">Loading stores...</option>') + '</select>'
+                        + '  </div>'
+                        + '  <div class="form-group">'
+                        + '    <label>Merchant Order ID (Invoice No)</label>'
+                        + '    <input type="text" id="patao-merchant-order-id" class="form-control" value="' + merchantOrderId + '">' 
+                        + '  </div>'
+                        + '  <div class="form-group">'
+                        + '    <label>Recipient Name</label>'
+                        + '    <input type="text" id="patao-recipient-name" class="form-control" value="' + recipientName + '">' 
+                        + '  </div>'
+                        + '  <div class="form-group">'
+                        + '    <label>Recipient Phone</label>'
+                        + '    <input type="text" id="patao-recipient-phone" class="form-control" value="' + recipientPhone + '">' 
+                        + '  </div>'
+                        + '  <div class="form-group">'
+                        + '    <label>Recipient Address</label>'
+                        + '    <textarea id="patao-recipient-address" class="form-control" rows="2">' + recipientAddress + '</textarea>'
+                        + '  </div>'
+                        + '  <div class="form-group">'
+                        + '    <label>Delivery Type</label>'
+                        + '    <select id="patao-delivery-type" class="form-control">'
+                        + '      <option value="48">Express</option>'
+                        + '      <option value="49">Normal</option>'
+                        + '      <option value="50">Gold</option>'
+                        + '    </select>'
+                        + '  </div>'
+                        + '  <div class="form-group">'
+                        + '    <label>Item Type</label>'
+                        + '    <select id="patao-item-type" class="form-control">'
+                        + '      <option value="2" selected>Parcel</option>'
+                        + '      <option value="1">Document</option>'
+                        + '    </select>'
+                        + '  </div>'
+                        + '  <div class="form-group">'
+                        + '    <label>Special Instruction</label>'
+                        + '    <input type="text" id="patao-special-instruction" class="form-control" placeholder="Need to Delivery before 5 PM">'
+                        + '  </div>'
+                        + '  <div class="form-row">'
+                        + '    <div class="form-group col-6">'
+                        + '      <label>Item Quantity</label>'
+                        + '      <input type="number" id="patao-item-quantity" class="form-control" min="1" value="1">'
+                        + '    </div>'
+                        + '    <div class="form-group col-6">'
+                        + '      <label>Item Weight (kg)</label>'
+                        + '      <input type="text" id="patao-item-weight" class="form-control" value="0.5">'
+                        + '    </div>'
+                        + '  </div>'
+                        + '  <div class="form-group">'
+                        + '    <label>Item Description</label>'
+                        + '    <textarea id="patao-item-description" class="form-control" rows="2">' + itemDescription + '</textarea>'
+                        + '  </div>'
+                        + '  <div class="form-group">'
+                        + '    <label>Amount to Collect</label>'
+                        + '    <input type="number" id="patao-amount-to-collect" class="form-control" value="' + (amountToCollect || '') + '">' 
+                        + '  </div>'
+                        + '</div>';
+
+                    Swal.fire({
+                        title: 'Send with Patao',
+                        html: formHtml,
+                        showCancelButton: true,
+                        confirmButtonText: 'Send',
+                        cancelButtonText: 'Cancel',
+                        focusConfirm: false,
+                        didOpen: () => {
+                            var $s = $('#patao-store');
+                            function render(list){
+                                var filtered = filterActiveStores(list);
+                                $s.empty();
+                                if (Array.isArray(filtered) && filtered.length) {
+                                    $s.html(buildStoreOptionsHtml(filtered));
+                                } else {
+                                    $s.append('<option value="">No active stores found</option>');
+                                }
+                            }
+                            if (window.pataoStoresFetched) {
+                                render(window.pataoStores);
+                            } else {
+                                $s.empty().append('<option value="">Loading stores...</option>');
+                                var tries = 0;
+                                var timer = setInterval(function(){
+                                    if (window.pataoStoresFetched) {
+                                        clearInterval(timer);
+                                        render(window.pataoStores);
+                                    } else if (++tries >= 20) {
+                                        clearInterval(timer);
+                                        $s.empty().append('<option value="">No active stores found</option>');
+                                    }
+                                }, 300);
+                            }
+                        },
+                        preConfirm: () => {
+                            var storeId = $('#patao-store').val();
+                            var payload = {
+                                order_id: id,
+                                store_id: storeId,
+                                merchant_order_id: $('#patao-merchant-order-id').val(),
+                                recipient_name: $('#patao-recipient-name').val(),
+                                recipient_phone: $('#patao-recipient-phone').val(),
+                                recipient_address: $('#patao-recipient-address').val(),
+                                delivery_type: parseInt($('#patao-delivery-type').val() || '48', 10),
+                                item_type: parseInt($('#patao-item-type').val() || '2', 10),
+                                special_instruction: $('#patao-special-instruction').val(),
+                                item_quantity: parseInt($('#patao-item-quantity').val() || '1', 10),
+                                item_weight: $('#patao-item-weight').val(),
+                                item_description: $('#patao-item-description').val(),
+                                amount_to_collect: parseFloat($('#patao-amount-to-collect').val() || '0'),
+                                _token: $('meta[name="csrf-token"]').attr('content') || undefined
+                            };
+                            if (!payload.store_id) {
+                                Swal.showValidationMessage('Please select a Store');
+                                return false;
+                            }
+                            if (!payload.recipient_name || !payload.recipient_phone || !payload.recipient_address) {
+                                Swal.showValidationMessage('Recipient name, phone and address are required');
+                                return false;
+                            }
+                            if (!payload.merchant_order_id) {
+                                Swal.showValidationMessage('Merchant Order ID (invoice no) is required');
+                                return false;
+                            }
+                            return new Promise(function(resolve, reject){
+                                $.ajax({
+                                    url: window.location.origin + '/admin/patao/orders',
+                                    method: 'POST',
+                                    data: JSON.stringify(payload),
+                                    contentType: 'application/json; charset=UTF-8',
+                                    headers: $.ajaxSettings.headers || {},
+                                    success: function(res){
+                                        if (res && res.ok) {
+                                            resolve(res);
+                                        } else {
+                                            var msg = (res && res.message) ? res.message : 'Order creation failed';
+                                            Swal.showValidationMessage(msg);
+                                            reject(msg);
+                                        }
+                                    },
+                                    error: function(xhr){
+                                        var msg = (xhr.responseJSON && xhr.responseJSON.message) ? xhr.responseJSON.message : (xhr.responseText || 'Request failed');
+                                        Swal.showValidationMessage(msg);
+                                        reject(msg);
+                                    }
+                                });
+                            });
+                        }
+                    }).then((result) => {
+                        var res = (result && result.value) ? result.value : (result || {});
+                        var ok = !!(res && (res.ok === true || res.status === 'success' || (res.data && (res.data.code === 200 || res.data.order_status))));
+                        if (result && result.isConfirmed && ok) {
+                            var msg = (res && res.data && res.data.message) ? res.data.message : (res.message || 'Order Created Successfully');
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Sent',
+                                text: msg,
+                                timer: 2000,
+                                showConfirmButton: false
+                            });
+                            if (window.toastr && typeof toastr.success === 'function') {
+                                toastr.success(msg);
+                            }
+                            // Reload table data without resetting paging
+                            if (table && table.ajax) {
+                                table.ajax.reload(null, false);
+                            }
+                        }
+                    });
+                    return;
+                }
+
+                // Default status change flow
+                $.ajax({
                     type: "get",
                     url: "{{url('admin/order/changeStatusByCheckbox')}}",
                     data: {
@@ -565,6 +884,254 @@
                 e.preventDefault();
                 var status = $(this).attr('data-status');
                 var id = $(this).attr('data-id');
+
+                if (status === 'send-with-patao') {
+                    var $tr = $(this).closest('tr');
+                    var rowData = table.row($tr).data() || {};
+
+                    function stripHtmlWithBreaks(html){
+                        var text = (html || '').replace(/<br\s*\/\?\s*>/gi, '\n').replace(/<[^>]+>/g, '');
+                        return text;
+                    }
+                    function parseCustomerInfo(text){
+                        var normalized = stripHtmlWithBreaks(text).replace(/\s+/g, ' ').trim();
+                        // Try to find a contiguous 10-11 digit phone number (e.g., 01558971708)
+                        var phoneDigitsMatch = normalized.match(/\d{10,11}/);
+                        var phone = '';
+                        var name = '';
+                        var address = '';
+                        if (phoneDigitsMatch) {
+                            phone = phoneDigitsMatch[0];
+                            name = normalized.slice(0, phoneDigitsMatch.index).trim();
+                            address = normalized.slice(phoneDigitsMatch.index + phoneDigitsMatch[0].length).trim();
+                        } else {
+                            // Fallback: use line-based split if <br> existed originally
+                            var lines = stripHtmlWithBreaks(text).split('\n').map(function(l){return l.trim();}).filter(function(l){return l.length;});
+                            name = lines[0] || '';
+                            phone = lines[1] || '';
+                            address = lines.slice(2).join(' ') || '';
+                        }
+                        return { name: name, phone: phone, address: address };
+                    }
+
+                    var invoiceText = stripHtmlWithBreaks(rowData.invoice);
+                    var invoiceParts = (invoiceText || '').split('\n');
+                    var merchantOrderId = (invoiceParts[0] || '').trim();
+
+                    var parsed = parseCustomerInfo(rowData.customerInfo || '');
+                    var recipientName = parsed.name;
+                    var recipientPhone = parsed.phone;
+                    var recipientAddress = parsed.address;
+
+                    var amountToCollect = (rowData.subTotal || '').toString().replace(/[^0-9.]/g, '');
+                    var itemDescription = 'this is a Cloth item, price- ' + (amountToCollect || '');
+
+                    function buildStoreOptionsHtml(list){
+                        var filtered = filterActiveStores(list);
+                        if (!Array.isArray(filtered) || filtered.length === 0) {
+                            return '<option value="">No active stores found</option>';
+                        }
+                        var defaultFound = false;
+                        var options = filtered.map(function(st){
+                            var sid = st.store_id || st.id || '';
+                            var name = st.store_name || st.name || 'Unnamed';
+                            var addr = st.store_address || '';
+                            var isDefault = (st.is_default_store === true || st.is_default_store === 1 || st.is_default_store === '1');
+                            var selectedAttr = '';
+                            if (isDefault && !defaultFound) { selectedAttr = ' selected'; defaultFound = true; }
+                            return '<option value="' + sid + '"' + selectedAttr + '>' + name + (addr ? ' — ' + addr : '') + '</option>';
+                        }).join('');
+                        var placeholder = defaultFound ? '<option value="" disabled>Select Store</option>' : '<option value="" disabled selected>Select Store</option>';
+                        return placeholder + options;
+                    }
+
+                    var formHtml = ''
+                        + '<div class="text-left">'
+                        + '  <div class="form-group">'
+                        + '    <label>Store</label>'
+                        + '    <select id="patao-store" class="form-control">' + (window.pataoStoresFetched ? buildStoreOptionsHtml(window.pataoStores) : '<option value="">Loading stores...</option>') + '</select>'
+                        + '  </div>'
+                        + '  <div class="form-group">'
+                        + '    <label>Merchant Order ID (Invoice No)</label>'
+                        + '    <input type="text" id="patao-merchant-order-id" class="form-control" value="' + merchantOrderId + '">' 
+                        + '  </div>'
+                        + '  <div class="form-group">'
+                        + '    <label>Recipient Name</label>'
+                        + '    <input type="text" id="patao-recipient-name" class="form-control" value="' + recipientName + '">' 
+                        + '  </div>'
+                        + '  <div class="form-group">'
+                        + '    <label>Recipient Phone</label>'
+                        + '    <input type="text" id="patao-recipient-phone" class="form-control" value="' + recipientPhone + '">' 
+                        + '  </div>'
+                        + '  <div class="form-group">'
+                        + '    <label>Recipient Address</label>'
+                        + '    <textarea id="patao-recipient-address" class="form-control" rows="2">' + recipientAddress + '</textarea>'
+                        + '  </div>'
+                        + '  <div class="form-group">'
+                        + '    <label>Delivery Type</label>'
+                        + '    <select id="patao-delivery-type" class="form-control">'
+                        + '      <option value="48">Express</option>'
+                        + '      <option value="49">Normal</option>'
+                        + '      <option value="50">Gold</option>'
+                        + '    </select>'
+                        + '  </div>'
+                        + '  <div class="form-group">'
+                        + '    <label>Item Type</label>'
+                        + '    <select id="patao-item-type" class="form-control">'
+                        + '      <option value="2" selected>Parcel</option>'
+                        + '      <option value="1">Document</option>'
+                        + '    </select>'
+                        + '  </div>'
+                        + '  <div class="form-group">'
+                        + '    <label>Special Instruction</label>'
+                        + '    <input type="text" id="patao-special-instruction" class="form-control" placeholder="Need to Delivery before 5 PM">'
+                        + '  </div>'
+                        + '  <div class="form-row">'
+                        + '    <div class="form-group col-6">'
+                        + '      <label>Item Quantity</label>'
+                        + '      <input type="number" id="patao-item-quantity" class="form-control" min="1" value="1">'
+                        + '    </div>'
+                        + '    <div class="form-group col-6">'
+                        + '      <label>Item Weight (kg)</label>'
+                        + '      <input type="text" id="patao-item-weight" class="form-control" value="0.5">'
+                        + '    </div>'
+                        + '  </div>'
+                        + '  <div class="form-group">'
+                        + '    <label>Item Description</label>'
+                        + '    <textarea id="patao-item-description" class="form-control" rows="2">' + itemDescription + '</textarea>'
+                        + '  </div>'
+                        + '  <div class="form-group">'
+                        + '    <label>Amount to Collect</label>'
+                        + '    <input type="number" id="patao-amount-to-collect" class="form-control" value="' + (amountToCollect || '') + '">' 
+                        + '  </div>'
+                        + '</div>';
+
+                    Swal.fire({
+                        title: 'Send with Patao',
+                        html: formHtml,
+                        showCancelButton: true,
+                        confirmButtonText: 'Send',
+                        cancelButtonText: 'Cancel',
+                        focusConfirm: false,
+                        didOpen: () => {
+                            var $s = $('#patao-store');
+                            function render(list){
+                                var filtered = filterActiveStores(list);
+                                $s.empty();
+                                if (Array.isArray(filtered) && filtered.length) {
+                                    $s.html(buildStoreOptionsHtml(filtered));
+                                } else {
+                                    $s.append('<option value="">No active stores found</option>');
+                                }
+                            }
+                            if (window.pataoStoresFetched) {
+                                render(window.pataoStores);
+                            } else {
+                                $s.empty().append('<option value="">Loading stores...</option>');
+                                var tries = 0;
+                                var timer = setInterval(function(){
+                                    if (window.pataoStoresFetched) {
+                                        clearInterval(timer);
+                                        render(window.pataoStores);
+                                    } else if (++tries >= 20) {
+                                        clearInterval(timer);
+                                        $s.empty().append('<option value="">No active stores found</option>');
+                                    }
+                                }, 300);
+                            }
+                        },
+                        preConfirm: () => {
+                            var storeId = $('#patao-store').val();
+                            var payload = {
+                                order_id: rowData.id || id,
+                                store_id: storeId,
+                                merchant_order_id: $('#patao-merchant-order-id').val(),
+                                recipient_name: $('#patao-recipient-name').val(),
+                                recipient_phone: $('#patao-recipient-phone').val(),
+                                recipient_address: $('#patao-recipient-address').val(),
+                                delivery_type: parseInt($('#patao-delivery-type').val() || '48', 10),
+                                item_type: parseInt($('#patao-item-type').val() || '2', 10),
+                                special_instruction: $('#patao-special-instruction').val(),
+                                item_quantity: parseInt($('#patao-item-quantity').val() || '1', 10),
+                                item_weight: $('#patao-item-weight').val(),
+                                item_description: $('#patao-item-description').val(),
+                                amount_to_collect: parseFloat($('#patao-amount-to-collect').val() || '0'),
+                                _token: $('meta[name="csrf-token"]').attr('content') || undefined
+                            };
+                            if (!payload.store_id) {
+                                Swal.showValidationMessage('Please select a Store');
+                                return false;
+                            }
+                            if (!payload.recipient_name || !payload.recipient_phone || !payload.recipient_address) {
+                                Swal.showValidationMessage('Recipient name, phone and address are required');
+                                return false;
+                            }
+                            if (!payload.merchant_order_id) {
+                                Swal.showValidationMessage('Merchant Order ID (invoice no) is required');
+                                return false;
+                            }
+                            return new Promise(function(resolve, reject){
+                                $.ajax({
+                                    url: window.location.origin + '/admin/patao/orders',
+                                    method: 'POST',
+                                    data: JSON.stringify(payload),
+                                    contentType: 'application/json; charset=UTF-8',
+                                    headers: $.ajaxSettings.headers || {},
+                                    success: function(res){
+                                        console.log('Patao Order Response:', res);
+                                        if (res && res.ok) {
+                                            resolve(res);
+                                             var msg = (res && res.data && res.data.message) ? res.data.message : (res.message || 'Order Created Successfully');
+                                            Swal.fire({
+                                                    icon: 'success',
+                                                    title: 'Sent',
+                                                    text: msg,
+                                                    timer: 2000,
+                                                    showConfirmButton: false
+                                                });
+                                                if (window.toastr && typeof toastr.success === 'function') {
+                                                    toastr.success(msg);
+                                                }
+                                                if (table && table.ajax) {
+                                                    table.ajax.reload(null, false);
+                                                }
+                                        } else {
+                                            reject(res && res.message ? res.message : 'Order creation failed');
+                                        }
+                                    },
+                                    error: function(xhr){
+                                        var msg = (xhr.responseJSON && xhr.responseJSON.message) ? xhr.responseJSON.message : (xhr.responseText || 'Request failed');
+                                        reject(msg);
+                                    }
+                                });
+                            });
+                        }
+                    }).then((result) => {
+                        var res = (result && result.value) ? result.value : (result || {});
+                        var ok = !!(res && (res.ok === true || res.status === 'success' || (res.data && (res.data.code === 200 || res.data.order_status))));
+                        if (result && result.isConfirmed && ok) {
+                            var msg = (res && res.data && res.data.message) ? res.data.message : (res.message || 'Order Created Successfully');
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Sent',
+                                text: msg,
+                                timer: 2000,
+                                showConfirmButton: false
+                            });
+                            if (window.toastr && typeof toastr.success === 'function') {
+                                toastr.success(msg);
+                            }
+                            if (table && table.ajax) {
+                                table.ajax.reload(null, false);
+                            }
+                        } else if (result && result.isConfirmed && !ok) {
+                            var err = (res && res.message) ? res.message : 'Order creation failed';
+                            Swal.fire({ icon: 'error', title: 'Failed', text: err });
+                        }
+                    });
+                    return;
+                }
+
                 $.ajax({
                     type: "get",
                     url: "{{url('admin/order/status')}}",
@@ -588,6 +1155,8 @@
                     }
                 });
             });
+
+            
 
             $(".datepicker").flatpickr();
 

@@ -227,6 +227,17 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth', 'a
     Route::post('setting/getSlider', '\App\Http\Controllers\Admin\SettingController@getSlider')->name('getSlider');
      Route::resource('setting', '\App\Http\Controllers\Admin\SettingController');
 
+    // Patao Setup and Order routes
+    Route::get('patao/setup', '\App\Http\Controllers\Admin\PataoController@setup')->name('patao.setup');
+    Route::post('patao/setup', '\App\Http\Controllers\Admin\PataoController@setupSave')->name('patao.setup.save');
+    Route::post('patao/check', '\App\Http\Controllers\Admin\PataoController@checkAndSync')->name('patao.check');
+    Route::get('patao/order-with-patao', '\App\Http\Controllers\Admin\PataoController@orderWithPatao')->name('patao.order_with_patao');
+    Route::get('patao/order-status', '\App\Http\Controllers\Admin\PataoController@orderStatus')->name('patao.order_status');
+    Route::get('patao/stores', '\App\Http\Controllers\Admin\PataoController@stores')->name('patao.stores');
+    Route::post('patao/orders', '\App\Http\Controllers\Admin\PataoController@createOrder')->name('patao.orders');
+
+    Route::get('all/order-status', '\App\Http\Controllers\Admin\PataoController@show')->name('patao.order_status_data');
+
 
 });
 

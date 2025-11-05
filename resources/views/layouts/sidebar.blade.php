@@ -113,6 +113,24 @@
                         </li>
                     </ul>
                 </li>
+                <li>
+                    <a href="javascript: void(0);">
+                        <i class="fe-settings"></i>
+                        <span> Patao </span>
+                        <span class="menu-arrow"></span>
+                    </a>
+                    <ul class="nav-second-level" aria-expanded="false">
+                        <li class="{{ (request()->is('admin/patao/setup')) ? 'active' : '' }}">
+                            <a href="{{url('admin/patao/setup ')}}" class="{{ (request()->is('admin/patao/setup')) ? 'active' : '' }}">Setup</a>
+                        </li>
+                        <li class="{{ (request()->is('admin/patao/order-with-patao')) ? 'active' : '' }}">
+                            <a href="{{url('admin/patao/order-with-patao ')}}" class="{{ (request()->is('admin/patao/order-with-patao')) ? 'active' : '' }}">Order with Patao</a>
+                        </li>
+                        <li class="{{ (request()->is('admin/patao/order-status*')) ? 'active' : '' }}">
+                            <a href="{{ url('admin/patao/order-status') }}" class="{{ (request()->is('admin/patao/order-status*')) ? 'active' : '' }}">Order Status</a>
+                        </li>
+                    </ul>
+                </li>
                 <li class="{{ (request()->routeIs('admin/order')) ? 'active' : '' }}">
                     <a href="{{url('admin/order/status/Processing ')}}" class="{{ (request()->is('admin/order')) ? 'active' : '' }}">
                         <i class="fe-shopping-cart"></i>

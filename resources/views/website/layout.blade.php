@@ -27,16 +27,24 @@
     {!! Settings::get('facebook_pixels') !!}
 
     <style>
+        .main {
+            display: flex;
+        }
+
         .left-menu {
             width: 20%;
-            height: 100%;
-            /* position: fixed; */
-            /* top: 0; */
-            /* left: 0; */
-            background-color: #f8f9fa;
+            position: fixed;
+            z-index: 200;
+            height: 82vh;
+            top: 21%;
+            overflow: scroll;
         }
+
         .right-content {
             width: 80%;
+            margin-left: 20%;
+            margin-top: 9%;
+
         }
     </style>
 
@@ -49,16 +57,16 @@
     $footerControl = \App\Setting::get('FOOTER_CONTROLL') ?? env('FOOTER_CONTROLL', 'footer_one');
     ?>
     @if ($homeControl === 'home_three')
-            @includeFirst(['website.header.' . $headerControl, 'website.header.header_one'])
+        @includeFirst(['website.header.' . $headerControl, 'website.header.header_one'])
 
-        <main class="" style="display: flex;">
-                <div class="left-menu" style="position: fixed; top: 120px; left: 0; width: 20%; height: 90vh; overflow-y: auto;">
-                    @include('website.sidebar')
-                </div>
-                <div class="right-content" style="margin-left: 20%; height: 90vh; overflow-y: auto;">
-                    @yield('content')
-                    @includeFirst(['website.footer.' . $footerControl, 'website.footer.footer_one'])
-                </div>
+        <main class="main" style="">
+            <div class="left-menu">
+                @include('website.sidebar.sidebar')
+            </div>
+            <div class="right-content">
+                @yield('content')
+                @includeFirst(['website.footer.' . $footerControl, 'website.footer.footer_one'])
+            </div>
         </main>
     @else
         <main class="main-content">
@@ -248,20 +256,36 @@
     </script>
     @stack('js')
     @push('css')
-    <style>
-      @media (min-width: 992px) {
-        /* Existing grid-based layout */
-        .home-three-columns { height: calc(100vh - 120px); overflow: hidden; }
-        .content-scroll { height: calc(100vh - 120px); overflow-y: auto; overscroll-behavior: contain; }
-        .rest-content { height: calc(100vh - 120px); overflow-y: auto; overscroll-behavior: contain; }
-    
-        /* Your custom flex-based layout */
-        .display-flex { display: flex !important; flex-direction: row !important; align-items: stretch; height: calc(100vh - 120px); overflow: hidden; }
-        .left-menu { box-sizing: border-box; flex: 0 0 20%; max-width: 20%; height: calc(100vh - 120px); overflow-y: auto; }
-        .right-content { box-sizing: border-box; flex: 1 1 80%; max-width: 80%; height: calc(100vh - 120px); overflow-y: auto; }
-      }
-    </style>
-    @endpush
-</body>
+        <style>
+            @media (min-width: 992px) {
 
-</html>
+                /* Existing grid-based layout */
+                .home-three-columns {
+                    height: calc(100vh - 120px);
+                    overflow: hidden;
+                }
+
+                .content-scroll {
+                    height: calc(100vh - 120px);
+                    overflow-y: auto;
+                    overscroll-behavior: contain;
+                }
+
+                .rest-content {
+                    height: calc(100vh - 120px);
+                    overflow-y: auto;
+                    overscroll-behavior: contain;
+                }
+
+                /* Your custom flex-based layout */
+                .display-flex {
+                    display: flex !important;
+                    flex-direction: row !important;
+                    align-items: stretch;
+                    height: calc(100vh - 120px);
+                    overflow: hidden;
+                }
+
+                /* .left-menu { box-sizing: border-box; flex: 0 0 20%; max-width: 20%; height: calc(100vh - 120px); overflow-y: auto; } */
+                /* .right-content { box-sizing: border-box; flex: 1 1 80%; max-width: 80%; vh - 1:2c0-c(100v} - 120px)} */
+            </st-yylauto @endpush </body></html>

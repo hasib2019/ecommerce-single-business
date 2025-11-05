@@ -126,7 +126,7 @@ class OrderController extends Controller
         if ($status == 'Pending Invoiced') {
             $orders = $orders->whereIn('orders.status', ['Completed', 'Pending Invoiced']);
         }
-         if ($status == 'Customer On Hold') {
+        if ($status == 'Customer On Hold') {
             $orders = $orders->whereIn('orders.status', ['Delivered', 'Customer On Hold']);
         }
         if ($status == 'Delivered') {
@@ -654,6 +654,8 @@ class OrderController extends Controller
                 $html = $html . "<a class='dropdown-item btn-status' data-id='" . $id . "' data-status='" . $value['name'] . "' href='#'>" . $value['name'] . "</a>";
             }
         }
+        // Append custom action: Send with Patao
+        $html = $html . "<a class='dropdown-item btn-status' data-id='" . $id . "' data-status='send-with-patao' href='#'>Send with Patao</a>";
         $response = "<div class='btn-group dropdown'>
             <a href='javascript: void(0);'  class='table-action-btn dropdown-toggle arrow-none btn " . $args[$status]['color'] . " btn-xs' data-toggle='dropdown' aria-expanded='false'>" . $args[$status]['name'] . " <i class='mdi mdi-chevron-down'></i></a>
             <div class='dropdown-menu dropdown-menu-right'>
@@ -687,7 +689,6 @@ class OrderController extends Controller
     public function orderSync(Request $request)
     {
         $stores = Store::query()->where('status', 'like', 'Active')->get();
-        // dd($stores);
 
         $orderCount = 0;
         foreach ($stores as $store) {

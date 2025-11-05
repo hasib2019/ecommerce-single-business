@@ -1,5 +1,5 @@
 {{-- Optimized Header Design - Merged and Enhanced --}}
-<header class="section-header sticky-top">
+<header class="section-header" style="position: fixed; top: 0; left: 0; right: 0; z-index: 1050;">
     {{-- <h1>work header</h1> --}}
     {{-- Top Navigation Bar --}}
     <nav class="navbar navbar-expand-lg top_nav navbar-light" style="background-color: #fafcff;color: gray">
