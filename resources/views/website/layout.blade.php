@@ -46,6 +46,118 @@
             margin-top: 9%;
 
         }
+        
+        /* Floating Cart Styles */
+        .floating-cart-btn {
+            position: fixed;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            z-index: 9999;
+            background-color: #fff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 80px;
+            border: 1px solid #eee;
+        }
+        .floating-cart-btn i {
+            font-size: 24px;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        .floating-cart-btn .cart-count {
+            background: #000;
+            color: #fff;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .floating-cart-btn .cart-total {
+            font-size: 12px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        /* Drawer Styles */
+        .cart-drawer {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 350px;
+            height: 100vh;
+            background: #fff;
+            z-index: 10000;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+            transition: right 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        .cart-drawer.open {
+            right: 0;
+        }
+        .drawer-header {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8f9fa;
+        }
+        .drawer-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+        }
+        .drawer-footer {
+            padding: 15px;
+            border-top: 1px solid #eee;
+            background: #fff;
+        }
+        .cart-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 9998;
+            display: none;
+        }
+        .cart-overlay.open {
+            display: block;
+        }
+        
+        .dc-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .dc-image img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+        .dc-content {
+            flex: 1;
+        }
+        .dc-actions button {
+            background: none;
+            border: none;
+            color: #ff0000;
+            cursor: pointer;
+        }
     </style>
 
 </head>
@@ -75,11 +187,21 @@
         </main>
         @includeFirst(['website.footer.' . $footerControl, 'website.footer.footer_one'])
     @endif
+    
+    <!-- Cart Drawer Container -->
+    <div id="cart_items"></div>
+    <div class="cart-overlay" onclick="toggleCartDrawer()"></div>
+
     <script src="{{ asset('assets/js/lazyload.js') }}"></script>
     <script src="{{ asset('assets/js/sweetalert2.min.js') }}"></script>
     <script src="{{ asset('libs/toastr/toastr.min.js') }}"></script>
     <script src="{{ asset('assets/js/script.js') }}"></script>
     <script>
+        function toggleCartDrawer() {
+            $('#cartDrawer').toggleClass('open');
+            $('.cart-overlay').toggleClass('open');
+        }
+
         $(document).ready(function() {
             updateNavCart();
         });

@@ -137,6 +137,12 @@
                         <span> Order </span>
                     </a>
                 </li>
+                <li class="{{ (request()->is('admin/fraudchecker')) ? 'active' : '' }}">
+                    <a href="{{url('admin/fraudchecker ')}}" class="{{ (request()->is('admin/fraudchecker')) ? 'active' : '' }}">
+                        <i class="fe-shield"></i>
+                        <span> Fraud Checker </span>
+                    </a>
+                </li>
                 <li class="{{ (request()->is('admin/order/Pending Invoiced')) ? 'active' : '' }}">
                     <a href="{{url('admin/order/status/Pending Invoiced ')}}" class="{{ (request()->is('admin/order/status/Pending Invoiced')) ? 'active' : '' }}">
                         <i class="fas fa-file-invoice"></i>

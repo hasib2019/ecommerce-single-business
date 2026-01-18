@@ -29,6 +29,12 @@ Route::get('/category/{slug}', [\App\Http\Controllers\WebsiteController::class, 
 Route::get('/page/{slug}', [\App\Http\Controllers\WebsiteController::class, 'page'])->name('page');
 Route::get('/shop', [\App\Http\Controllers\WebsiteController::class, 'shop'])->name('shop');
 
+Route::get('/contact-us', [\App\Http\Controllers\ContactController::class, 'index'])->name('contact.index');
+Route::post('/contact-us', [\App\Http\Controllers\ContactController::class, 'store'])->name('contact.store');
+
+Route::get('/order-tracking', [\App\Http\Controllers\TrackingController::class, 'index'])->name('tracking.index');
+Route::post('/order-tracking', [\App\Http\Controllers\TrackingController::class, 'track'])->name('tracking.track');
+
 Route::get('/getProducts', [\App\Http\Controllers\WebsiteController::class, 'loadProducts'])->name('loadProducts');
 Route::get('/getCategoryProducts', [\App\Http\Controllers\WebsiteController::class, 'loadCategoryProducts'])->name('loadCategoryProducts');
 
@@ -238,6 +244,9 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth', 'a
 
     Route::get('all/order-status', '\App\Http\Controllers\Admin\PataoController@show')->name('patao.order_status_data');
 
+    // Fraud checker
+    Route::get('fraudchecker', '\App\Http\Controllers\Admin\FraudCheckerController@index')->name('fraudchecker');
+
 
 });
 
@@ -420,5 +429,3 @@ Route::group(['as' => 'user.', 'prefix' => 'user', 'middleware' => ['auth', 'use
 
 
 });
-
-

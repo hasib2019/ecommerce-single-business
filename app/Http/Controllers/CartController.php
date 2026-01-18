@@ -114,75 +114,67 @@ class CartController extends Controller
     }
     public function miniCart()
     {
-        if(Cart::count() > 0){  ?>
-            <a href="" class="icon icon-xs rounded-circle border" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                <i class="fa fa-shopping-cart d-inline-block nav-box-icon"></i>
-                <span class="badge badge-pill badge-danger notify"><?php echo Cart::count(); ?></span>
-            </a>
-            <ul class="dropdown-menu dropdown-menu-right px-0" x-placement="bottom-end" style="position: absolute; transform: translate3d(-328px, 32px, 0px); top: 0px; left: 0px; will-change: transform;">
-                <li>
-                    <div class="dropdown-cart px-0">
-                        <div class="dc-header">
-                            <h4 class="text-center py-2">Cart Items</h4>
-                        </div>
-                        <div class="dropdown-cart-items c-scrollbar">
-                            <?php foreach(Cart::content() as $item) {  ?>
-                                <div class="dc-item">
-                                    <div class="d-flex align-items-center">
-                                        <div class="dc-image">
-                                            <a href="<?php echo url('/product/'.$item->model->productSlug) ;?>">
-                                                <img  src="<?php echo url('/product/thumbnail/'.$item->model->productImage)?>" class="img-fluid" alt="">
-                                            </a>
-                                        </div>
-                                        <div class="dc-content">
-                                            <span class="d-block dc-product-name text-capitalize strong-600 mb-1">
-                                                 <a href="<?php echo url('/product/'.$item->model->productSlug) ;?>">
-                                                     <?php echo $item->model->productName  ?>
-                                                 </a>
-                                            </span>
+        $total = Cart::subtotal('0','','');
+        $count = Cart::count();
+        $content = Cart::content();
+        ?>
+        <!-- Floating Button -->
+        <div class="floating-cart-btn" onclick="toggleCartDrawer()">
+            <i class="fa fa-shopping-cart"></i>
+            <span class="cart-total">TK <?php echo $total; ?></span>
+            <span class="cart-count"><?php echo $count; ?> Items</span>
+        </div>
 
-                                            <span class="dc-quantity">x<?php echo $item->qty ?></span>
-                                            <span class="dc-price">TK <?php echo $item->model->price() ?></span>
-                                        </div>
-                                        <div class="dc-actions">
-                                            <button onclick="removeFromCart('<?php echo $item->rowId; ?>')">
-                                                <i class="fa fa-times"></i>
-                                            </button>
-                                        </div>
-                                    </div>
+        <!-- Drawer -->
+        <div class="cart-drawer" id="cartDrawer">
+            <div class="drawer-header">
+                <h5 class="mb-0">Shopping Cart <span class="badge badge-danger rounded-pill ml-2"><?php echo $count; ?></span></h5>
+                <button type="button" onclick="toggleCartDrawer()" style="background: none; border: none; font-size: 24px; color: #333;">&times;</button>
+            </div>
+            <div class="drawer-body">
+                <?php if($count > 0) { ?>
+                    <?php foreach($content as $item) { ?>
+                        <div class="dc-item">
+                            <div class="dc-image">
+                                <a href="<?php echo url('/product/'.$item->model->productSlug) ;?>">
+                                    <img src="<?php echo url('/product/thumbnail/'.$item->model->productImage)?>" alt="">
+                                </a>
+                            </div>
+                            <div class="dc-content">
+                                <a href="<?php echo url('/product/'.$item->model->productSlug) ;?>" class="d-block text-dark mb-1" style="font-size: 14px; font-weight: 600;">
+                                    <?php echo $item->model->productName ?>
+                                </a>
+                                <div class="text-muted" style="font-size: 13px;">
+                                    <?php echo $item->qty ?> x TK <?php echo $item->model->price() ?>
                                 </div>
-                            <?php } ?>
-
+                            </div>
+                            <div class="dc-actions">
+                                <button onclick="removeFromCart('<?php echo $item->rowId; ?>')">
+                                    <i class="fa fa-times"></i>
+                                </button>
+                            </div>
                         </div>
-                        <div class="dc-item py-3">
-                            <span class="subtotal-text">Subtotal</span>
-                            <span class="subtotal-amount">৳ <?php echo Cart::subtotal('0','','') ?></span>
-                        </div>
-                        <div class="p-2 text-center dc-btn">
-                            <a href="<?php echo url('/checkout'); ?>" class="link link--style-1 text-capitalize btn btn-success px-3 py-1 light-text btn-block">
-                                <i class="la la-mail-forward"></i> Checkout
-                            </a>
-                        </div>
+                    <?php } ?>
+                <?php } else { ?>
+                    <div class="text-center py-5">
+                        <i class="fa fa-shopping-basket fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">Your cart is empty</p>
+                        <p class="small text-muted">Add items to get started</p>
                     </div>
-                </li>
-            </ul>
-        <?php }else{ ?>
-            <span class="badge badge-pill badge-danger notify">0</span>
-            <a href="" class="icon icon-xs rounded-circle border" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                <i class="fa fa-shopping-cart d-inline-block nav-box-icon"></i>
-                <span class="badge badge-pill badge-danger notify">0</span>
-            </a>
-            <ul class="dropdown-menu dropdown-menu-right px-0" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-328px, 32px, 0px);">
-
-                <li>
-                    <div class="dropdown-cart px-0">
-                        <div class="dc-header">
-                            <h4 class="text-center py-2">Empty Cart</h4>
-                        </div>
-                    </div>
-                </li>
-            </ul>
-        <?php }
+                <?php } ?>
+            </div>
+            <div class="drawer-footer">
+                <div class="d-flex justify-content-between mb-3">
+                    <span class="text-muted">Subtotal:</span>
+                    <strong class="text-dark">TK <?php echo $total; ?></strong>
+                </div>
+                <div class="d-grid gap-2">
+                    <a href="<?php echo url('/checkout'); ?>" class="btn btn-dark btn-block">Place Order</a>
+                    <a href="<?php echo url('/shop'); ?>" class="btn btn-outline-dark btn-block mt-2">Continue Shopping</a>
+                </div>
+            </div>
+        </div>
+        <?php
     }
 
     public function updateQuantity(Request $request)

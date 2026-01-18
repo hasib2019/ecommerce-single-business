@@ -1,7 +1,6 @@
 @extends('website.layout')
 
 @section('content')
-<h1>home 2</h1>
     <section class="section-main">
         <style>
             .slider-home-banner .carousel-item { height: 500px; }

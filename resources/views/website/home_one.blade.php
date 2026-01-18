@@ -4,7 +4,7 @@
 @endpush
 @section('content')
 
-
+<div style="background: #f8f9fa;">
     <section class="section-main bg padding-y-sm">
         <div class="container">
 
@@ -64,6 +64,7 @@
             </div> <!-- row.// -->
         </div> <!-- container //  -->
     </section>
+    @if(count($topProducts) > 0)
     <section class="section-name bg padding-y-sm pt-0">
         <div class="container">
             <header class="section-heading mt-0">
@@ -94,11 +95,16 @@
             </div> 
         </div><!-- container // -->
     </section>
+    @endif
     <section class="section-name bg padding-y-sm pt-0">
         <div class="container">
-            <header class="section-heading mt-0">
-                <a href="https://emall.com.bd/shop" class="btn btn-info btn-sm float-end rounded">View More</a>
-                <h4 class="section-title">All Products</h4>
+            <header class="section-heading mt-0 position-relative py-3 text-center">
+                <h4 class="section-title fw-bold text-uppercase mb-0 d-inline-block" style="letter-spacing: 1px; border-bottom: 2px solid #17a2b8; padding-bottom: 5px;">
+                   All Products
+                </h4>
+                <a href="/shop" class="btn btn-info text-white btn-sm rounded-pill shadow-sm px-4 fw-bold" style="position: absolute; right: 0; top: 50%; transform: translateY(-50%);">
+                    View More <i class="fa fa-arrow-right ms-1"></i>
+                </a>
             </header>
             <div class="row g-0" id="loadProducts">
 
@@ -108,7 +114,7 @@
             </div>
         </div>
     </section>
-
+</div>
 @endsection
 
 @push('js')
