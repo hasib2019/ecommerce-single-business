@@ -28,20 +28,21 @@
             </div>
 
             {{-- Search Form --}}
-            <form class="d-flex header_search col-lg-6 m-auto" action="{{ url('/shop') }}">
-                <?php $categoriesMenu = Menu::getByName('Category Menu'); ?>
-                <select name="category" class="form-select d-lg-block d-none" style="width: 120px; font-size: 14px; border-radius: 5px 0 0 5px; font-weight: 600; background-color: #ede5e5;">
+            <form class="d-flex header_search col-lg-6 m-auto position-relative" action="{{ url('/shop') }}">
+                <?php $categoriesMenu = Menu::getAllCategories(); ?>
+                <select name="category" id="search_category" class="form-select d-lg-block d-none" style="width: 120px; font-size: 14px; border-radius: 5px 0 0 5px; font-weight: 600; background-color: #ede5e5;">
                     <option value="">All Categories</option>
                     @if ($categoriesMenu)
                         @foreach ($categoriesMenu as $cat)
-                            <option value="{{ $cat['link'] }}">{{ $cat['label'] }}</option>
+                            <option value="{{ $cat['id'] }}" {{ request('category') == $cat['id'] ? 'selected' : '' }}>{{ $cat['label'] }}</option>
                         @endforeach
                     @endif
                 </select>
-                <input class="form-control" type="text" placeholder="Search for products, brands and more" name="q" value="{{ request('q') }}">
+                <input class="form-control" id="search_input" type="text" placeholder="Search for products, brands and more" name="q" value="{{ request('q') }}" autocomplete="off">
                 <button class="btn orange-bg text-white" type="submit">
                     <i class="fa fa-search"></i>
                 </button>
+                <div id="search_results" class="position-absolute w-100 bg-white shadow rounded-bottom" style="top: 100%; left: 0; z-index: 9999; display: none; max-height: 400px; overflow-y: auto; border: 1px solid #eee;"></div>
             </form>
 
             {{-- Desktop Actions --}}
@@ -142,4 +143,69 @@
     .category_dropdown_box .categories { max-height: 60vh; overflow-y: auto; }
     .main_nav .nav-link { font-weight: 600; }
 </style>
+@endpush
+
+@push('js')
+<script>
+    $(document).ready(function() {
+        let searchTimeout;
+        const $searchInput = $('#search_input');
+        const $searchResults = $('#search_results');
+        const $searchCategory = $('#search_category');
+
+        $searchInput.on('input', function() {
+            clearTimeout(searchTimeout);
+            const query = $(this).val();
+            const category = $searchCategory.val();
+
+            if (query.length < 2) {
+                $searchResults.hide();
+                return;
+            }
+
+            searchTimeout = setTimeout(function() {
+                $.ajax({
+                    url: "{{ route('ajaxSearch') }}",
+                    method: 'GET',
+                    data: {
+                        q: query,
+                        category: category
+                    },
+                    success: function(response) {
+                        if (response.length > 0) {
+                            let html = '<ul class="list-group list-group-flush">';
+                            response.forEach(function(product) {
+                                html += `
+                                    <li class="list-group-item">
+                                        <a href="${product.url}" class="d-flex align-items-center text-decoration-none text-dark">
+                                            <img src="${product.image}" alt="${product.name}" style="width: 40px; height: 40px; object-fit: cover; margin-right: 10px;">
+                                            <div>
+                                                <div class="fw-bold" style="font-size: 14px;">${product.name}</div>
+                                                <div class="text-muted small">৳ ${product.price}</div>
+                                            </div>
+                                        </a>
+                                    </li>
+                                `;
+                            });
+                            html += '</ul>';
+                            $searchResults.html(html).show();
+                        } else {
+                            $searchResults.html('<div class="p-3 text-center text-muted">No products found</div>').show();
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Search error:", error);
+                    }
+                });
+            }, 300);
+        });
+
+        // Hide results when clicking outside
+        $(document).on('click', function(e) {
+            if (!$(e.target).closest('.header_search').length) {
+                $searchResults.hide();
+            }
+        });
+    });
+</script>
 @endpush

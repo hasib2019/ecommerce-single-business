@@ -4,11 +4,11 @@
     <section class="section-name bg padding-y-sm">
         <div class="container">
             <header class="section-heading">
-                <h4 class="section-title">All products</h4>
+                {{-- <h4 class="section-title">All products</h4> --}}
             </header>
             <div class="row ">
                 @foreach($shop as $product)
-                <div class="col-md-3 col-6 mb-4"> 
+                <div class="col-lg-custom-5 col-md-4 col-6 mb-3"> 
                      <div class="card h-100 border-0 shadow-sm rounded-3 product-card" 
                           style="transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); cursor: pointer;" 
                           onmouseover="this.style.transform='translateY(-8px)'; this.classList.remove('shadow-sm'); this.classList.add('shadow-lg');" 
@@ -49,7 +49,7 @@
                                      onclick="addToCart({{ $product->id }})" 
                                      onmouseover="this.classList.remove('btn-outline-dark'); this.classList.add('btn-dark');" 
                                      onmouseout="this.classList.add('btn-outline-dark'); this.classList.remove('btn-dark');"> 
-                                 <i class="fa fa-shopping-bag me-1"></i> Order Now 
+                                 <i class="fa fa-shopping-bag me-1"></i>  অর্ডার করুন 
                              </button> 
                          </div> 
                      </div> 

@@ -28,6 +28,7 @@ Route::get('/product/{id}', [\App\Http\Controllers\WebsiteController::class, 'pr
 Route::get('/category/{slug}', [\App\Http\Controllers\WebsiteController::class, 'category'])->name('category');
 Route::get('/page/{slug}', [\App\Http\Controllers\WebsiteController::class, 'page'])->name('page');
 Route::get('/shop', [\App\Http\Controllers\WebsiteController::class, 'shop'])->name('shop');
+Route::get('/ajax-search', [\App\Http\Controllers\WebsiteController::class, 'ajaxSearch'])->name('ajaxSearch');
 
 Route::get('/contact-us', [\App\Http\Controllers\ContactController::class, 'index'])->name('contact.index');
 Route::post('/contact-us', [\App\Http\Controllers\ContactController::class, 'store'])->name('contact.store');

@@ -241,35 +241,54 @@
                             <div class="small"></div>
                         </div>
                     </div>
-                    <div class="products mt-1 pt-1" id="cat-{{ $fc->id }}-list" data-cat-id="{{ $fc->id }}" data-offset="{{ $limit }}" data-limit="{{ $limit }}">
+                    <div class="row mt-1 pt-1" id="cat-{{ $fc->id }}-list" data-cat-id="{{ $fc->id }}" data-offset="{{ $limit }}" data-limit="{{ $limit }}">
                         @foreach ($initialProducts[$fc->id] as $product)
-                            <div class="product">
-                                <div class="image">
-                                    <a href="{{ url('/product/' . $product->id) }}" id="product_show" data-productid="{{ $product->id }}" data-categoryid="{{ $fc->categoryName }}" data-productname="{{ $product->productName }}">
-                                        <img class="img-fit lazyload first" src="{{ asset('product/thumbnail/default.jpg') }}" data-src="{{ asset('/product/thumbnail/' . $product->productImage) }}" alt="{{ $product->productName }}">
-                                        <img class="img-fit lazyload second" src="{{ asset('product/thumbnail/default.jpg') }}" data-src="{{ asset('/product/thumbnail/' . $product->productImage) }}" alt="{{ $product->productName }}">
-                                    </a>
-                                </div>
-                                <div class="labels"></div>
-                                <div class="content px-2 text-center pb-2">
-                                    <a href="{{ url('/product/' . $product->id) }}" id="product_show" data-productid="{{ $product->id }}" data-categoryid="{{ $fc->categoryName }}" data-productname="{{ $product->productName }}">
-                                        <div class="title">{{ $product->productName }}</div>
-                                    </a>
-                                    <div class="stars d-flex justify-content-center py-2">
-                                        <div class="d-flex align-items-center text-warning">
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                        </div>
-                                    </div>
-                                    <div class="price">{!! $product->htmlPrice() !!}</div>
-                                    <button class="submit_button btn btnLight d-block w-100 border cart_btn ord_bt" style="border-radius: 5px;" onclick="addToCart({{ $product->id }})">
-                                        <i class="fa fa-shopping-cart me-2" aria-hidden="true"></i><span class="bold"> অর্ডার করুন</span>
-                                    </button>
-                                </div>
-                            </div>
+                            <div class="col-lg-custom-5 col-md-4 col-6 mb-3"> 
+                                 <div class="card h-100 border-0 shadow-sm rounded-3 product-card" 
+                                      style="transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); cursor: pointer;" 
+                                      onmouseover="this.style.transform='translateY(-8px)'; this.classList.remove('shadow-sm'); this.classList.add('shadow-lg');" 
+                                      onmouseout="this.style.transform='translateY(0)'; this.classList.add('shadow-sm'); this.classList.remove('shadow-lg');"> 
+                                     <div class="position-relative overflow-hidden rounded-top-3"> 
+                                         <a href="{{ url('/product/' . $product->id) }}" class="d-block bg-light"> 
+                                             <img class="img-fluid w-100 lazyload" 
+                                                  src="{{ asset('product/thumbnail/default.jpg') }}" 
+                                                  data-src="{{ asset('/product/thumbnail/' . $product->productImage) }}" 
+                                                  alt="{{ $product->productName }}" 
+                                                  style="height: 220px; object-fit: cover; opacity: 0.9; filter: brightness(0.95); transition: all 0.5s ease;" 
+                                                  onmouseover="this.style.opacity='1'; this.style.filter='brightness(1.05)'; this.style.transform='scale(1.05)';" 
+                                                  onmouseout="this.style.opacity='0.9'; this.style.filter='brightness(0.95)'; this.style.transform='scale(1)';"> 
+                                         </a> 
+                                         <div class="position-absolute top-0 end-0 p-2"> 
+                                             <button class="btn btn-light rounded-circle shadow-sm d-flex align-items-center justify-content-center" 
+                                                     style="width: 35px; height: 35px; transition: all 0.2s;" title="Wishlist" 
+                                                     onmouseover="this.classList.add('bg-danger'); this.querySelector('i').classList.remove('text-danger'); this.querySelector('i').classList.add('text-white');" 
+                                                     onmouseout="this.classList.remove('bg-danger'); this.querySelector('i').classList.add('text-danger'); this.querySelector('i').classList.remove('text-white');"> 
+                                                 <i class="far fa-heart text-danger"></i> 
+                                             </button> 
+                                         </div> 
+                                     </div> 
+                                     
+                                     <div class="card-body p-3 d-flex flex-column text-center"> 
+                                         <a href="{{ url('/product/' . $product->id) }}" class="text-decoration-none text-dark mb-2"> 
+                                             <h6 class="fw-bold text-truncate mb-0" style="font-size: 1rem; transition: color 0.2s;" 
+                                                 onmouseover="this.style.color='#17a2b8';" 
+                                                 onmouseout="this.style.color='inherit';">{{ $product->productName }}</h6> 
+                                         </a> 
+                                         
+                                         <div class="mb-3 text-primary fw-bold" style="font-size: 1.1rem;"> 
+                                             {!! $product->htmlPrice() !!} 
+                                         </div> 
+             
+                                         <button class="btn btn-outline-dark w-100 mt-auto rounded-pill fw-bold py-2" 
+                                                 style="transition: all 0.3s;" 
+                                                 onclick="addToCart({{ $product->id }})" 
+                                                 onmouseover="this.classList.remove('btn-outline-dark'); this.classList.add('btn-dark');" 
+                                                 onmouseout="this.classList.add('btn-outline-dark'); this.classList.remove('btn-dark');"> 
+                                             <i class="fa fa-shopping-bag me-1"></i>  অর্ডার করুন 
+                                         </button> 
+                                     </div> 
+                                 </div> 
+                             </div>
                         @endforeach
                     </div>
                     <div class="text-center mt-3">
@@ -330,35 +349,53 @@
                         <div class="small"></div>
                     </div>
                 </div>
-                <div class="products mt-1 pt-1">
+                <div class="row mt-1 pt-1">
                     @foreach ($topProducts->take(5) as $product)
-                        <div class="product">
-                            <div class="image">
-                                <a href="{{ url('/product/' . $product->id) }}" id="product_show" data-productid="{{ $product->id }}" data-categoryid="Dhamaka Offer" data-productname="{{ $product->productName }}">
-                                    <img class="img-fit lazyload first" src="{{ asset('product/thumbnail/default.jpg') }}" data-src="{{ asset('/product/thumbnail/' . $product->productImage) }}" alt="{{ $product->productName }}">
-                                    <img class="img-fit lazyload second" src="{{ asset('product/thumbnail/default.jpg') }}" data-src="{{ asset('/product/thumbnail/' . $product->productImage) }}" alt="{{ $product->productName }}">
-                                </a>
-                            </div>
-                            <div class="labels"></div>
-                            <div class="content px-2 text-center pb-2">
-                                <a href="{{ url('/product/' . $product->id) }}" id="product_show" data-productid="{{ $product->id }}" data-categoryid="Dhamaka Offer" data-productname="{{ $product->productName }}">
-                                    <div class="title">{{ $product->productName }}</div>
-                                </a>
-                                <div class="stars d-flex justify-content-center py-2">
-                                    <div class="d-flex align-items-center text-warning">
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                    </div>
-                                </div>
-                                <div class="price">{!! $product->htmlPrice() !!}</div>
-                                <button class="submit_button btn btnLight d-block w-100 border cart_btn ord_bt" onclick="addToCart({{ $product->id }})">
-                                    <i class="fa fa-shopping-cart me-2" aria-hidden="true"></i><span class="bold"> অর্ডার করুন</span>
-                                </button>
-                            </div>
-                        </div>
+                        <div class="col-lg-custom-5 col-md-4 col-6 mb-3"> 
+                             <div class="card h-100 border-0 shadow-sm rounded-3 product-card" 
+                                  style="transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); cursor: pointer;" 
+                                  onmouseover="this.style.transform='translateY(-8px)'; this.classList.remove('shadow-sm'); this.classList.add('shadow-lg');" 
+                                  onmouseout="this.style.transform='translateY(0)'; this.classList.add('shadow-sm'); this.classList.remove('shadow-lg');"> 
+                                 <div class="position-relative overflow-hidden rounded-top-3"> 
+                                     <a href="{{ url('/product/' . $product->id) }}" class="d-block bg-light"> 
+                                         <img class="img-fluid w-100 lazyload" 
+                                              src="{{ asset('product/thumbnail/default.jpg') }}" 
+                                              data-src="{{ asset('/product/thumbnail/' . $product->productImage) }}" 
+                                              alt="{{ $product->productName }}" 
+                                              style="height: 220px; object-fit: cover; opacity: 0.9; filter: brightness(0.95); transition: all 0.5s ease;" 
+                                              onmouseover="this.style.opacity='1'; this.style.filter='brightness(1.05)'; this.style.transform='scale(1.05)';" 
+                                              onmouseout="this.style.opacity='0.9'; this.style.filter='brightness(0.95)'; this.style.transform='scale(1)';"> 
+                                     </a> 
+                                     <div class="position-absolute top-0 end-0 p-2"> 
+                                         <button class="btn btn-light rounded-circle shadow-sm d-flex align-items-center justify-content-center" 
+                                                 style="width: 35px; height: 35px; transition: all 0.2s;" title="Wishlist" 
+                                                 onmouseover="this.classList.add('bg-danger'); this.querySelector('i').classList.remove('text-danger'); this.querySelector('i').classList.add('text-white');" 
+                                                 onmouseout="this.classList.remove('bg-danger'); this.querySelector('i').classList.add('text-danger'); this.querySelector('i').classList.remove('text-white');"> 
+                                             <i class="far fa-heart text-danger"></i> 
+                                         </button> 
+                                     </div> 
+                                     
+                                     <div class="card-body p-3 d-flex flex-column text-center"> 
+                                         <a href="{{ url('/product/' . $product->id) }}" class="text-decoration-none text-dark mb-2"> 
+                                             <h6 class="fw-bold text-truncate mb-0" style="font-size: 1rem; transition: color 0.2s;" 
+                                                 onmouseover="this.style.color='#17a2b8';" 
+                                                 onmouseout="this.style.color='inherit';">{{ $product->productName }}</h6> 
+                                         </a> 
+                                         
+                                         <div class="mb-3 text-primary fw-bold" style="font-size: 1.1rem;"> 
+                                             {!! $product->htmlPrice() !!} 
+                                         </div> 
+             
+                                         <button class="btn btn-outline-dark w-100 mt-auto rounded-pill fw-bold py-2" 
+                                                 style="transition: all 0.3s;" 
+                                                 onclick="addToCart({{ $product->id }})" 
+                                                 onmouseover="this.classList.remove('btn-outline-dark'); this.classList.add('btn-dark');" 
+                                                 onmouseout="this.classList.add('btn-outline-dark'); this.classList.remove('btn-dark');"> 
+                                             <i class="fa fa-shopping-bag me-1"></i>  অর্ডার করুন 
+                                         </button> 
+                                     </div> 
+                                 </div> 
+                             </div>
                     @endforeach
                 </div>
             </div>

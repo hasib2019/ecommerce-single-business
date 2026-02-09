@@ -34,6 +34,9 @@ a,a:hover , .page-link{
 .navbar a.nav-link{
     color:white;
 }
+.navbar a.nav-link-black{
+    color:#212529;
+}
 .all-category {
     height: 40px;
     line-height: 40px;

@@ -328,7 +328,7 @@
             </div>
 
             <div class="button-shop">
-                <a href="tel:01834144430" class="footerBtn">
+                <a href="tel:{{ Settings::get('phone_number') }}" class="footerBtn">
                     <i class="fa-solid fa-phone-volume"></i>
                     <span style="color: #00276C;">Call</span>
                 </a>
