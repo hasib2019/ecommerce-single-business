@@ -2,31 +2,45 @@
 @push('css')
     <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
     <style>
-        .home-one-hero-slider {
-            height: 450px;
-        }
-        .home-one-hero-slider .carousel-inner,
-        .home-one-hero-slider .carousel-item {
-            height: 100%;
-        }
-        .home-one-hero-slider img {
-            height: 100%;
-            object-fit: cover;
-        }
-        .home-one-category {
-            height: 450px;
-            display: flex;
-            flex-direction: column;
-        }
-        .home-one-category .card {
-            flex: 1;
+        .homewatch-category-card {
+            background: #ffffff;
+            border-radius: 16px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 8px 30px rgba(15,23,42,0.08);
+            max-height: 420px;
             overflow-y: auto;
         }
-        @media (max-width: 991.98px) {
-            .home-one-hero-slider,
-            .home-one-category {
-                height: auto;
-            }
+        .homewatch-category-header {
+            padding: 16px 22px;
+            background: #f3f4f6;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .homewatch-category-header span {
+            display: block;
+            font-weight: 700;
+            font-size: 16px;
+            color: #111827;
+        }
+        .homewatch-category-body {
+            padding: 0;
+        }
+        .homewatch-category-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 22px;
+            text-decoration: none;
+            border-top: 1px solid #e5e7eb;
+            transition: background-color 0.15s ease, color 0.15s ease;
+        }
+        .homewatch-category-item p {
+            margin: 0;
+            font-size: 14px;
+            font-weight: 600;
+            color: #111827;
+        }
+        .homewatch-category-item:hover {
+            background: #e5e7eb;
         }
     </style>
 @endpush
@@ -34,12 +48,34 @@
 
 <div style="background: #f8f9fa;">
     <section class="section-main bg padding-y-sm">
-        <div class="container">
+        <div class="container-fluid">
 
             <div class="row">
                 <?php  use App\Category; $category = Menu::getByName('Category Menu');  ?> 
-                 <div class="{{ $category ? 'col-lg-9' : 'col-lg-12' }} order-lg-2">
-                    <div id="carousel1_indicator" class="slider-home-banner carousel slide home-one-hero-slider" data-ride="carousel">
+                @if($category)
+                <div class="col-lg-3 d-none d-lg-block">
+                    <div class="homewatch-category-card">
+                        <div class="homewatch-category-header">
+                            <span>Category List</span>
+                        </div>
+                        <div class="homewatch-category-body">
+                            <a href="{{ route('shop') }}" class="homewatch-category-item">
+                                <p>All products</p>
+                            </a>
+                            <a href="{{ route('shop') }}" class="homewatch-category-item">
+                                <p>All category</p>
+                            </a>
+                            @foreach($category as $menu)
+                                <a href="{{ $menu['link'] }}" class="homewatch-category-item">
+                                    <p>{{ $menu['label'] }}</p>
+                                </a>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+                @endif
+                <div class="{{ $category ? 'col-lg-9' : 'col-lg-12' }} order-lg-2">
+                    <div id="carousel1_indicator" class="slider-home-banner carousel slide" data-ride="carousel">
                         <ol class="carousel-indicators">
                             @foreach($slides as $key=>$slide)
                                 <li data-bs-target="#carousel1_indicator" data-slide-to="{{ $key }}" class="@if($key == 0 ) active @endif"></li>
@@ -63,32 +99,8 @@
                             <span class="sr-only">Next</span>
                         </a>
                     </div>
-                </div> <!-- col.// -->
-                  @if($category)
-                <div class="col-md-3 order-lg-1 home-one-category">
-                    <div class="all-category">
-                        <span>Categories</span>
-                    </div>
-                    <nav class="card">
-                        <ul class="menu-category">
-                           
-                            @foreach($category as $menu)
-                                <li>
-                                    <a href="{{ $menu['link'] }}">
-                                        <?php
-                                        $category = Category::where('categoryName','like',"%{$menu['label']}%")->first();
-                                        if(!empty($category->categoryImage)){ ?>
-                                        <img class="cat-image d-lg-none lazyload" src="{{ asset('product/thumbnail/default.jpg') }}" data-src="{{ asset('product/thumbnail/'.$category->categoryImage) }}" width="30" alt="Special Offer">
-                                        <?php } ?>
-                                        <span class="cat-name">{{ $menu['label'] }}</span>
-                                    </a>
-                                </li>
-                            @endforeach
-                        </ul>
-                    </nav>
                 </div> 
-                @endif
-
+                {{-- @endif --}}
             </div> <!-- row.// -->
         </div> <!-- container //  -->
     </section>

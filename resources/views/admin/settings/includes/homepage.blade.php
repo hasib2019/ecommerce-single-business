@@ -21,6 +21,8 @@
                             <option value="home_one" {{ $homeControll === 'home_one' ? 'selected' : '' }}>Home One</option>
                             <option value="home_two" {{ $homeControll === 'home_two' ? 'selected' : '' }}>Home Two</option>
                             <option value="home_three" {{ $homeControll === 'home_three' ? 'selected' : '' }}>Home Three</option>
+                            <option value="home_watch" {{ $homeControll === 'home_watch' ? 'selected' : '' }}>Home Watch</option>
+                            <option value="home_market" {{ $homeControll === 'home_market' ? 'selected' : '' }}>Home Market</option>
                         </select>
                         <small class="text-muted">Controls which home view is rendered.</small>
                     </div>
@@ -32,6 +34,8 @@
                             <option value="header_one" {{ $headerControll === 'header_one' ? 'selected' : '' }}>Header One</option>
                             <option value="header_two" {{ $headerControll === 'header_two' ? 'selected' : '' }}>Header Two</option>
                             <option value="header_three" {{ $headerControll === 'header_three' ? 'selected' : '' }}>Header Three</option>
+                            <option value="header_watch" {{ $headerControll === 'header_watch' ? 'selected' : '' }}>Header Watch</option>
+                            <option value="header_market" {{ $headerControll === 'header_market' ? 'selected' : '' }}>Header Market</option>
                         </select>
                     </div>
                 </div>
@@ -45,6 +49,8 @@
                             <option value="footer_one" {{ $footerControll === 'footer_one' ? 'selected' : '' }}>Footer One</option>
                             <option value="footer_two" {{ $footerControll === 'footer_two' ? 'selected' : '' }}>Footer Two</option>
                             <option value="footer_three" {{ $footerControll === 'footer_three' ? 'selected' : '' }}>Footer Three</option>
+                            <option value="footer_watch" {{ $footerControll === 'footer_watch' ? 'selected' : '' }}>Footer Watch</option>
+                            <option value="footer_market" {{ $footerControll === 'footer_market' ? 'selected' : '' }}>Footer Market</option>
                         </select>
                     </div>
                 </div>

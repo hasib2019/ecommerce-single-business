@@ -1,4 +1,4 @@
-<header class="section-header header-one-sticky">
+<header class="section-header">
     <section class="header-main border-bottom py-3 bg-white">
         <div class="container">
             <div class="row align-items-center">
@@ -14,19 +14,18 @@
 
                 <!-- Search Bar Section -->
                 <div class="col-lg-5 col-12 search-box mt-3 mt-lg-0">
-                    <form action="{{ url('/shop') }}" class="search position-relative">
+                    <form action="{{ url('/shop') }}" class="search">
                         <div class="input-group w-100 rounded-pill overflow-hidden bg-light border">
                             <div class="d-lg-none search-box-back">
                                 <button class="btn btn-link text-dark" type="button"><i class="fa fa-arrow-left"></i></button>
                             </div>
-                            <input type="text" name="q" id="header_search_input" class="form-control border-0 bg-transparent ps-4" placeholder="Search for products ..." style="box-shadow: none;" autocomplete="off">
+                            <input type="text" name="q" class="form-control border-0 bg-transparent ps-4" placeholder="Search for products ..." style="box-shadow: none;">
                             <div class="input-group-append">
                                 <button class="btn bg-transparent border-0 px-4" type="submit">
                                     <i class="fa fa-search text-muted"></i>
                                 </button>
                             </div>
                         </div>
-                        <div id="header_search_results" class="bg-white shadow rounded-bottom" style="position: absolute; top: 100%; left: 0; right: 0; z-index: 9999; display: none; max-height: 400px; overflow-y: auto; border: 1px solid #eee;"></div>
                     </form>
                 </div>
 
@@ -80,11 +79,6 @@
         /* General Header Styles */
         .header-main {
             box-shadow: 0 2px 15px rgba(0,0,0,0.03);
-        }
-        .header-one-sticky {
-            position: sticky;
-            top: 0;
-            z-index: 1020;
         }
         
         .fw-600 {
@@ -183,62 +177,3 @@
         }
     </style>
 </header>
-
-@push('js')
-<script>
-    $(document).ready(function() {
-        let headerSearchTimeout;
-        const $input = $('#header_search_input');
-        const $results = $('#header_search_results');
-
-        $input.on('input', function() {
-            clearTimeout(headerSearchTimeout);
-            const query = $(this).val();
-
-            if (query.length < 2) {
-                $results.hide();
-                return;
-            }
-
-            headerSearchTimeout = setTimeout(function() {
-                $.ajax({
-                    url: "{{ route('ajaxSearch') }}",
-                    method: 'GET',
-                    data: { q: query },
-                    success: function(response) {
-                        if (response.length > 0) {
-                            let html = '<ul class="list-group list-group-flush">';
-                            response.forEach(function(product) {
-                                html += `
-                                    <li class="list-group-item">
-                                        <a href="${product.url}" class="d-flex align-items-center text-decoration-none text-dark">
-                                            <img src="${product.image}" alt="${product.name}" style="width: 40px; height: 40px; object-fit: cover; margin-right: 10px;">
-                                            <div>
-                                                <div class="fw-bold" style="font-size: 14px;">${product.name}</div>
-                                                <div class="text-muted small">৳ ${product.price}</div>
-                                            </div>
-                                        </a>
-                                    </li>
-                                `;
-                            });
-                            html += '</ul>';
-                            $results.html(html).show();
-                        } else {
-                            $results.html('<div class="p-3 text-center text-muted">No products found</div>').show();
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Header search error:', error);
-                    }
-                });
-            }, 300);
-        });
-
-        $(document).on('click', function(e) {
-            if (!$(e.target).closest('.search-box').length) {
-                $results.hide();
-            }
-        });
-    });
-</script>
-@endpush

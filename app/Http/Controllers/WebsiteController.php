@@ -23,7 +23,7 @@ class WebsiteController extends Controller
         // Prefer DB settings for dynamic control; fallback to env
         $homeControl = Setting::get('HOME_CONTROLL') ?? env('HOME_CONTROLL', 'home_one');
         // dd($homeControl);
-        if ($homeControl === 'home_two') {
+        if (in_array($homeControl, ['home_two', 'home_watch', 'home_market'], true)) {
             $limit = (int) (Setting::get('home_two_featured_limit') ?? 10);
             $catsCsv = (string) (Setting::get('home_two_featured_cats') ?? '');
             $catIds = array_values(array_filter(array_map('intval', explode(',', $catsCsv))));
@@ -75,6 +75,12 @@ class WebsiteController extends Controller
                     ->orderBy('products.created_at', 'DESC')
                     ->limit($limit)
                     ->get();
+            }
+            if ($homeControl === 'home_watch') {
+                return view('website.home_watch', compact('slug', 'topProducts', 'slides', 'featuredCats', 'initialProducts', 'limit'));
+            }
+            if ($homeControl === 'home_market') {
+                return view('website.home_market', compact('slug', 'topProducts', 'slides', 'featuredCats', 'initialProducts', 'limit'));
             }
 
             return view('website.home_two', compact('slug', 'topProducts', 'slides', 'featuredCats', 'initialProducts', 'limit'));

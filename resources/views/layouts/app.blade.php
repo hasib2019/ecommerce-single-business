@@ -32,7 +32,7 @@
     <link href="{{asset('css/style.css')}}" rel="stylesheet" type="text/css" />
 </head>
 
-<body  data-keep-enlarged="true" class="enlarged">
+<body  data-keep-enlarged="true" class="sidebar-enable">
 {{--class="enlarged"--}}
 <!-- Begin page -->
 <div id="wrapper">

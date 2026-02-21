@@ -97,7 +97,7 @@ a,a:hover , .page-link{
 }
 .menu-category{
     scroll-behavior: auto;
-    height: 277px;
+    height: 450px;
     overflow: scroll;
     overflow-x: hidden;
     padding: 10px;
