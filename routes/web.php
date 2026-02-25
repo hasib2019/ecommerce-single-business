@@ -158,6 +158,11 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth', 'a
     // Send Sms
     Route::get('order/sendNumber', '\App\Http\Controllers\Admin\OrderController@sendNumber')->name('sendNumber');
 
+    // POS
+    Route::get('pos', '\App\Http\Controllers\Admin\PosController@index')->name('pos.index');
+    Route::get('pos/search', '\App\Http\Controllers\Admin\PosController@searchProducts')->name('pos.search');
+    Route::post('pos/store', '\App\Http\Controllers\Admin\PosController@store')->name('pos.store');
+
     Route::resource('order', '\App\Http\Controllers\Admin\OrderController');
 
     // Order Type

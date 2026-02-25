@@ -27,6 +27,43 @@
     {!! Settings::get('facebook_pixels') !!}
 
     <style>
+        :root {
+            --primary-color: {{ Settings::get('primary_color') ?? '#0d6efd' }};
+            --text-color: {{ Settings::get('text_color') ?? '#212529' }};
+            --btn-bg: {{ Settings::get('button_bg_color') ?? '#0d6efd' }};
+            --btn-hover-bg: {{ Settings::get('button_hover_bg_color') ?? '#0b5ed7' }};
+        }
+        
+        body {
+            color: var(--text-color) !important;
+        }
+
+        /* Apply dynamic primary color */
+        .text-primary, .menu-item:hover .menu-text, .icon-box i {
+            color: var(--primary-color) !important;
+        }
+        
+        /* Button Styles */
+        .btn-primary, .btn-info, .orange-bg, .btn-creative::before {
+            background-color: var(--btn-bg) !important;
+            border-color: var(--btn-bg) !important;
+            color: #fff !important;
+        }
+        
+        .btn-primary:hover, .btn-info:hover, .orange-bg:hover, .btn-creative:hover::before {
+            background-color: var(--btn-hover-bg) !important;
+            border-color: var(--btn-hover-bg) !important;
+        }
+
+        .btn-creative {
+            border-color: var(--btn-bg) !important;
+            color: var(--text-color) !important;
+        }
+        
+        .btn-creative:hover {
+            border-color: var(--btn-hover-bg) !important;
+        }
+
         .main {
             display: flex;
         }

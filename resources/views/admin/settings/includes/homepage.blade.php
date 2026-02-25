@@ -54,6 +54,30 @@
                         </select>
                     </div>
                 </div>
+                <div class="col-md-3">
+                    <div class="form-group mb-3">
+                        <label for="primary_color">Primary Color</label>
+                        <input type="color" class="form-control" id="primary_color" name="primary_color" value="{{ Settings::get('primary_color') ?? '#0d6efd' }}" style="height: 45px;">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group mb-3">
+                        <label for="text_color">Text Color</label>
+                        <input type="color" class="form-control" id="text_color" name="text_color" value="{{ Settings::get('text_color') ?? '#212529' }}" style="height: 45px;">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group mb-3">
+                        <label for="button_bg_color">Button BG</label>
+                        <input type="color" class="form-control" id="button_bg_color" name="button_bg_color" value="{{ Settings::get('button_bg_color') ?? '#0d6efd' }}" style="height: 45px;">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group mb-3">
+                        <label for="button_hover_bg_color">Button Hover BG</label>
+                        <input type="color" class="form-control" id="button_hover_bg_color" name="button_hover_bg_color" value="{{ Settings::get('button_hover_bg_color') ?? '#0b5ed7' }}" style="height: 45px;">
+                    </div>
+                </div>
             </div>
 
             <hr>

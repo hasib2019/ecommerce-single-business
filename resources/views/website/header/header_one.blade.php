@@ -114,7 +114,7 @@
             left: 0;
             width: 0;
             height: 2px;
-            background: linear-gradient(90deg, #0d6efd, #0dcaf0);
+            background: var(--primary-color);
             transition: width 0.3s ease;
             border-radius: 2px;
         }
@@ -124,7 +124,7 @@
         }
 
         .menu-item:hover .menu-text {
-            color: #0d6efd;
+            color: var(--primary-color);
         }
 
         .icon-box {
@@ -141,7 +141,7 @@
 
         .menu-item:hover .icon-box {
             background: #e7f1ff;
-            color: #0d6efd;
+            color: var(--primary-color);
             transform: translateY(-2px);
         }
 
@@ -151,7 +151,7 @@
             display: inline-block;
             color: #333;
             background: transparent;
-            border: 2px solid #333;
+            border: 2px solid var(--primary-color);
             overflow: hidden;
             transition: all 0.4s ease;
             z-index: 1;
@@ -166,7 +166,7 @@
             left: 0;
             width: 0;
             height: 100%;
-            background: #333;
+            background: var(--primary-color);
             transition: width 0.4s ease;
             z-index: -1;
         }
@@ -177,7 +177,7 @@
 
         .btn-creative:hover {
             color: #fff !important;
-            border-color: #333;
+            border-color: var(--primary-color);
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }

@@ -46,9 +46,9 @@
 
             {{-- Desktop Actions --}}
             <div class="d-none d-lg-flex align-items-center" style="gap: 10px;">
-                <a href="tel:01834144430" class="btn btn-sm orange-bg text-white" style="font-size: 14px; border-radius: 5px;">
+                <a href="tel:{{ Settings::get('phone_number') }}" class="btn btn-sm orange-bg text-white" style="font-size: 14px; border-radius: 5px;">
                     <i class="fa fa-phone me-1"></i>
-                    01834144430
+                    {{ Settings::get('phone_number') }}
                 </a>
                 <a href="{{ url('/login') }}" class="btn btn-sm orange-bg" style="border-radius: 25px;">
                     <img src="{{ asset('site/login.png') }}" style="width: 25px; filter: invert(0);" alt="Login">

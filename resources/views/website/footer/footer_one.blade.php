@@ -10,7 +10,7 @@
                             <img src="{{ asset(Settings::get('site_logo')) }}" alt="{{ Settings::get('site_name') }}" height="36">
                         </a>
                         <p class="footer-text">
-                            Modern ecommerce experience with fast delivery, secure payment and quality products.
+                            {{ Settings::get('footer_description') ?? 'Modern ecommerce experience with fast delivery, secure payment and quality products.' }}
                         </p>
                     </div>
                 </div>
@@ -49,9 +49,18 @@
                         </div>
                     </form>
                     <div class="footer-social d-flex gap-2">
-                        <a href="#" class="social-circle"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" class="social-circle"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="social-circle"><i class="fab fa-youtube"></i></a>
+                        @if(Settings::get('social_facebook'))
+                            <a href="{{ Settings::get('social_facebook') }}" class="social-circle"><i class="fab fa-facebook-f"></i></a>
+                        @endif
+                        @if(Settings::get('social_instagram'))
+                            <a href="{{ Settings::get('social_instagram') }}" class="social-circle"><i class="fab fa-instagram"></i></a>
+                        @endif
+                        @if(Settings::get('social_twitter'))
+                            <a href="{{ Settings::get('social_twitter') }}" class="social-circle"><i class="fab fa-twitter"></i></a>
+                        @endif
+                        @if(Settings::get('social_linkedin'))
+                            <a href="{{ Settings::get('social_linkedin') }}" class="social-circle"><i class="fab fa-linkedin-in"></i></a>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -86,7 +95,7 @@
         transition: color 0.2s ease;
     }
     .ecom-footer a:hover {
-        color: #38bdf8;
+        color: var(--primary-color);
     }
     .ecom-footer .footer-logo img {
         display: block;

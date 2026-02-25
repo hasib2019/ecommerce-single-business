@@ -60,6 +60,16 @@
                 />
             </div>
             <div class="form-group">
+                <label class="control-label" for="footer_description">Footer Description</label>
+                <textarea
+                    class="form-control"
+                    rows="3"
+                    placeholder="Enter footer description"
+                    id="footer_description"
+                    name="footer_description"
+                >{{ Settings::get('footer_description') }}</textarea>
+            </div>
+            <div class="form-group">
                 <label class="control-label" for="sms_content">Sms Content</label>
                 <input
                     class="form-control"

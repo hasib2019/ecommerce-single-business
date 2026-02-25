@@ -170,10 +170,6 @@
         }
 
         $(document).ready(function(){
-
-
-
-
             $('.popular-product-slider').slick({
                 slidesToShow: 5,
                 rows: 2,

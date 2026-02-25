@@ -13,6 +13,12 @@
                         <span> Dashboards </span>
                     </a>
                 </li>
+                <li class="{{ (request()->is('admin/pos*')) ? 'active' : '' }}">
+                    <a href="{{route('admin.pos.index')}}" class="{{ (request()->is('admin/pos*')) ? 'active' : '' }}">
+                        <i class="fe-shopping-cart"></i>
+                        <span> POS </span>
+                    </a>
+                </li>
                 <li>
                     <a href="javascript: void(0);">
                         <i class="fe-truck"></i>

@@ -101,7 +101,7 @@
         padding: 40px 15px 25px;
     }
     .watch-footer-title {
-        color: #f5b30a;
+        color: var(--primary-color);
         font-size: 16px;
         margin-bottom: 14px;
         font-weight: 600;
@@ -125,7 +125,7 @@
     }
     .watch-footer-contact i {
         margin-top: 3px;
-        color: #f5b30a;
+        color: var(--primary-color);
     }
     .watch-footer-contact a {
         color: #d3d7e6;
@@ -145,7 +145,7 @@
         text-decoration: none;
     }
     .watch-footer-links a:hover {
-        color: #f5b30a;
+        color: var(--primary-color);
     }
     .watch-footer-newsletter .input-group input {
         font-size: 13px;
@@ -157,7 +157,7 @@
     .watch-footer-newsletter .input-group button {
         border-radius: 0 30px 30px 0;
         border: none;
-        background: #f5b30a;
+        background: var(--primary-color);
         color: #050816;
     }
     .watch-footer-bottom {
@@ -172,7 +172,7 @@
         text-decoration: none;
     }
     .watch-footer-bottom-links a:hover {
-        color: #f5b30a;
+        color: var(--primary-color);
     }
     .footer-nav {
         background: #101522;
@@ -183,7 +183,7 @@
         color: #d3d7e6;
     }
     .footer-nav .footerBtn i {
-        color: #f5b30a;
+        color: var(--primary-color);
     }
 </style>
 @endpush
