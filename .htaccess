@@ -1,23 +1,21 @@
 <IfModule mod_rewrite.c>
-    <IfModule mod_negotiation.c>
-        Options -MultiViews -Indexes
-    </IfModule>
-
     RewriteEngine On
-    
-    # Redirect all requests to the public folder
+
+    # Redirect /public from browser to root
+    RewriteCond %{THE_REQUEST} /public [NC]
+    RewriteRule ^public/(.*)$ /$1 [R=301,L]
+
+    # Send everything to public folder internally
     RewriteCond %{REQUEST_URI} !^/public/
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^(.*)$ public/$1 [L,QSA]
-    
-    # Handle Authorization Header
-    RewriteCond %{HTTP:Authorization} .
-    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+    RewriteRule ^(.*)$ public/$1 [L]
 </IfModule>
 
+# Disable directory browsing
+Options -Indexes
+
+
+# GZIP Compression
 <IfModule mod_deflate.c>
-  # Compress HTML, CSS, JavaScript, Text, XML and fonts
   AddOutputFilterByType DEFLATE application/javascript
   AddOutputFilterByType DEFLATE application/rss+xml
   AddOutputFilterByType DEFLATE application/vnd.ms-fontobject
@@ -39,10 +37,4 @@
   AddOutputFilterByType DEFLATE text/javascript
   AddOutputFilterByType DEFLATE text/plain
   AddOutputFilterByType DEFLATE text/xml
-
-  # Remove browser bugs (only needed for really old browsers)
-  BrowserMatch ^Mozilla/4 gzip-only-text/html
-  BrowserMatch ^Mozilla/4\.0[678] no-gzip
-  BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
-  Header append Vary User-Agent
 </IfModule>
