@@ -18,7 +18,7 @@
                         </button>
                         <div class="single-image image-holder-wrapper clearfix">
                             @if (Settings::get('site_logo') != null)
-                                <div class="image-holder image-99"><img src="{{ url('uploads/thumbnail/'.Settings::get('site_logo')) }}" class='img-fluid avatar-xl rounded'><button type="button" class="btn btn-danger btn-xs waves-effect waves-light remove-image float-right"><i class="mdi mdi-close"></i></button><input type="hidden" name="site_logo" value="{{ Settings::get('site_logo') }}"></div>
+                                <div class="image-holder image-99"><img src="{{ url('product/thumbnail/'.Settings::get('site_logo')) }}" class='img-fluid avatar-xl rounded'><button type="button" class="btn btn-danger btn-xs waves-effect waves-light remove-image float-right"><i class="mdi mdi-close"></i></button><input type="hidden" name="site_logo" value="{{ Settings::get('site_logo') }}"></div>
                             @else
                                 <img src="https://via.placeholder.com/80x80?text=Placeholder+Image" id="logoImg" style="width: 80px; height: auto;">
 
