@@ -193,14 +193,14 @@
                         @foreach ($initialProducts[$fc->id] as $product)
                             <div class="product">
                                 <div class="image">
-                                    <a href="{{ url('/product/' . $product->id) }}" id="product_show" data-productid="{{ $product->id }}" data-categoryid="{{ $fc->categoryName }}" data-productname="{{ $product->productName }}">
+                                    <a href="{{ url('/product/' . $product->productSlug) }}" id="product_show" data-productid="{{ $product->id }}" data-categoryid="{{ $fc->categoryName }}" data-productname="{{ $product->productName }}">
                                         <img class="img-fit lazyload first" src="{{ asset('product/thumbnail/default.jpg') }}" data-src="{{ asset('/product/thumbnail/' . $product->productImage) }}" alt="{{ $product->productName }}">
                                         <img class="img-fit lazyload second" src="{{ asset('product/thumbnail/default.jpg') }}" data-src="{{ asset('/product/thumbnail/' . $product->productImage) }}" alt="{{ $product->productName }}">
                                     </a>
                                 </div>
                                 <div class="labels"></div>
                                 <div class="content px-2 text-center pb-2">
-                                    <a href="{{ url('/product/' . $product->id) }}" id="product_show" data-productid="{{ $product->id }}" data-categoryid="{{ $fc->categoryName }}" data-productname="{{ $product->productName }}">
+                                    <a href="{{ url('/product/' . $product->productSlug) }}" id="product_show" data-productid="{{ $product->id }}" data-categoryid="{{ $fc->categoryName }}" data-productname="{{ $product->productName }}">
                                         <div class="title">{{ $product->productName }}</div>
                                     </a>
                                     <div class="stars d-flex justify-content-center py-2">
@@ -282,14 +282,14 @@
                     @foreach ($topProducts->take(5) as $product)
                         <div class="product">
                             <div class="image">
-                                <a href="{{ url('/product/' . $product->id) }}" id="product_show" data-productid="{{ $product->id }}" data-categoryid="Dhamaka Offer" data-productname="{{ $product->productName }}">
+                                <a href="{{ url('/product/' . $product->productSlug) }}" id="product_show" data-productid="{{ $product->id }}" data-categoryid="Dhamaka Offer" data-productname="{{ $product->productName }}">
                                     <img class="img-fit lazyload first" src="{{ asset('product/thumbnail/default.jpg') }}" data-src="{{ asset('/product/thumbnail/' . $product->productImage) }}" alt="{{ $product->productName }}">
                                     <img class="img-fit lazyload second" src="{{ asset('product/thumbnail/default.jpg') }}" data-src="{{ asset('/product/thumbnail/' . $product->productImage) }}" alt="{{ $product->productName }}">
                                 </a>
                             </div>
                             <div class="labels"></div>
                             <div class="content px-2 text-center pb-2">
-                                <a href="{{ url('/product/' . $product->id) }}" id="product_show" data-productid="{{ $product->id }}" data-categoryid="Dhamaka Offer" data-productname="{{ $product->productName }}">
+                                <a href="{{ url('/product/' . $product->productSlug) }}" id="product_show" data-productid="{{ $product->id }}" data-categoryid="Dhamaka Offer" data-productname="{{ $product->productName }}">
                                     <div class="title">{{ $product->productName }}</div>
                                 </a>
                                 <div class="stars d-flex justify-content-center py-2">

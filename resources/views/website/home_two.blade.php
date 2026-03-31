@@ -249,7 +249,7 @@
                                       onmouseover="this.style.transform='translateY(-8px)'; this.classList.remove('shadow-sm'); this.classList.add('shadow-lg');" 
                                       onmouseout="this.style.transform='translateY(0)'; this.classList.add('shadow-sm'); this.classList.remove('shadow-lg');"> 
                                      <div class="position-relative overflow-hidden rounded-top-3"> 
-                                         <a href="{{ url('/product/' . $product->id) }}" class="d-block bg-light"> 
+                                         <a href="{{ url('/product/' . $product->productSlug) }}" class="d-block bg-light"> 
                                              <img class="img-fluid w-100 lazyload" 
                                                   src="{{ asset('product/thumbnail/default.jpg') }}" 
                                                   data-src="{{ asset('/product/thumbnail/' . $product->productImage) }}" 
@@ -269,7 +269,7 @@
                                      </div> 
                                      
                                      <div class="card-body p-3 d-flex flex-column text-center"> 
-                                         <a href="{{ url('/product/' . $product->id) }}" class="text-decoration-none text-dark mb-2"> 
+                                         <a href="{{ url('/product/' . $product->productSlug) }}" class="text-decoration-none text-dark mb-2"> 
                                              <h6 class="fw-bold text-truncate mb-0" style="font-size: 1rem; transition: color 0.2s;" 
                                                  onmouseover="this.style.color='#17a2b8';" 
                                                  onmouseout="this.style.color='inherit';">{{ $product->productName }}</h6> 
@@ -357,7 +357,7 @@
                                   onmouseover="this.style.transform='translateY(-8px)'; this.classList.remove('shadow-sm'); this.classList.add('shadow-lg');" 
                                   onmouseout="this.style.transform='translateY(0)'; this.classList.add('shadow-sm'); this.classList.remove('shadow-lg');"> 
                                  <div class="position-relative overflow-hidden rounded-top-3"> 
-                                     <a href="{{ url('/product/' . $product->id) }}" class="d-block bg-light"> 
+                                     <a href="{{ url('/product/' . $product->productSlug) }}" class="d-block bg-light"> 
                                          <img class="img-fluid w-100 lazyload" 
                                               src="{{ asset('product/thumbnail/default.jpg') }}" 
                                               data-src="{{ asset('/product/thumbnail/' . $product->productImage) }}" 
@@ -376,7 +376,7 @@
                                      </div> 
                                      
                                      <div class="card-body p-3 d-flex flex-column text-center"> 
-                                         <a href="{{ url('/product/' . $product->id) }}" class="text-decoration-none text-dark mb-2"> 
+                                         <a href="{{ url('/product/' . $product->productSlug) }}" class="text-decoration-none text-dark mb-2"> 
                                              <h6 class="fw-bold text-truncate mb-0" style="font-size: 1rem; transition: color 0.2s;" 
                                                  onmouseover="this.style.color='#17a2b8';" 
                                                  onmouseout="this.style.color='inherit';">{{ $product->productName }}</h6> 

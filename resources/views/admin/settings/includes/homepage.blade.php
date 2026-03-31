@@ -23,6 +23,7 @@
                             <option value="home_three" {{ $homeControll === 'home_three' ? 'selected' : '' }}>Home Three</option>
                             <option value="home_watch" {{ $homeControll === 'home_watch' ? 'selected' : '' }}>Home Watch</option>
                             <option value="home_market" {{ $homeControll === 'home_market' ? 'selected' : '' }}>Home Market</option>
+                            <option value="home_modern" {{ $homeControll === 'home_modern' ? 'selected' : '' }}>Home Modern</option>
                         </select>
                         <small class="text-muted">Controls which home view is rendered.</small>
                     </div>
@@ -36,6 +37,7 @@
                             <option value="header_three" {{ $headerControll === 'header_three' ? 'selected' : '' }}>Header Three</option>
                             <option value="header_watch" {{ $headerControll === 'header_watch' ? 'selected' : '' }}>Header Watch</option>
                             <option value="header_market" {{ $headerControll === 'header_market' ? 'selected' : '' }}>Header Market</option>
+                            <option value="header_modern" {{ $headerControll === 'header_modern' ? 'selected' : '' }}>Header Modern</option>
                         </select>
                     </div>
                 </div>
@@ -51,6 +53,7 @@
                             <option value="footer_three" {{ $footerControll === 'footer_three' ? 'selected' : '' }}>Footer Three</option>
                             <option value="footer_watch" {{ $footerControll === 'footer_watch' ? 'selected' : '' }}>Footer Watch</option>
                             <option value="footer_market" {{ $footerControll === 'footer_market' ? 'selected' : '' }}>Footer Market</option>
+                            <option value="footer_modern" {{ $footerControll === 'footer_modern' ? 'selected' : '' }}>Footer Modern</option>
                         </select>
                     </div>
                 </div>
@@ -108,6 +111,68 @@
                         <label for="home_two_featured_limit">Products per load</label>
                         <input type="number" class="form-control" id="home_two_featured_limit" name="home_two_featured_limit" min="1" max="50" value="{{ $limit > 0 ? $limit : 10 }}">
                         <small class="text-muted">Number of products to show and load each click.</small>
+                    </div>
+                </div>
+            </div>
+
+            <hr>
+            <h5>Home Modern Image Settings</h5>
+            <p class="text-muted">Configure variable image sizes and custom banner images for Home Modern layout.</p>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group mb-3">
+                        <label for="home_modern_hero_height_desktop">Hero Height (Desktop)</label>
+                        <input type="number" class="form-control" id="home_modern_hero_height_desktop" name="home_modern_hero_height_desktop" min="180" max="900" value="{{ (int) (Settings::get('home_modern_hero_height_desktop') ?? 360) }}">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group mb-3">
+                        <label for="home_modern_hero_height_mobile">Hero Height (Mobile)</label>
+                        <input type="number" class="form-control" id="home_modern_hero_height_mobile" name="home_modern_hero_height_mobile" min="140" max="600" value="{{ (int) (Settings::get('home_modern_hero_height_mobile') ?? 240) }}">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group mb-3">
+                        <label for="home_modern_product_image_height_desktop">Product Image Height (Desktop)</label>
+                        <input type="number" class="form-control" id="home_modern_product_image_height_desktop" name="home_modern_product_image_height_desktop" min="120" max="600" value="{{ (int) (Settings::get('home_modern_product_image_height_desktop') ?? 190) }}">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group mb-3">
+                        <label for="home_modern_product_image_height_mobile">Product Image Height (Mobile)</label>
+                        <input type="number" class="form-control" id="home_modern_product_image_height_mobile" name="home_modern_product_image_height_mobile" min="100" max="500" value="{{ (int) (Settings::get('home_modern_product_image_height_mobile') ?? 170) }}">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group mb-3">
+                        <label for="home_modern_product_image_fit">Product Image Fit</label>
+                        <select class="form-control" id="home_modern_product_image_fit" name="home_modern_product_image_fit">
+                            @php $fitMode = (string) (Settings::get('home_modern_product_image_fit') ?? 'cover'); @endphp
+                            <option value="cover" {{ $fitMode === 'cover' ? 'selected' : '' }}>Cover</option>
+                            <option value="contain" {{ $fitMode === 'contain' ? 'selected' : '' }}>Contain</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group mb-3">
+                        <label for="home_modern_banner_images">Banner Images (one per line)</label>
+                        <textarea class="form-control" rows="5" id="home_modern_banner_images" name="home_modern_banner_images" placeholder="example: product/thumbnail/banner1.jpg&#10;https://example.com/banner2.jpg">{{ Settings::get('home_modern_banner_images') }}</textarea>
+                        <small class="text-muted">Use relative path or full URL. These banners will appear between product sections.</small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label for="home_modern_banner_links">Banner Links (one per line)</label>
+                        <textarea class="form-control" rows="4" id="home_modern_banner_links" name="home_modern_banner_links" placeholder="example: /shop&#10;/category/offer">{{ Settings::get('home_modern_banner_links') }}</textarea>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label for="home_modern_banner_heights">Banner Heights in px (one per line)</label>
+                        <textarea class="form-control" rows="4" id="home_modern_banner_heights" name="home_modern_banner_heights" placeholder="example: 220&#10;280">{{ Settings::get('home_modern_banner_heights') }}</textarea>
                     </div>
                 </div>
             </div>

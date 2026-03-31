@@ -23,7 +23,7 @@ class WebsiteController extends Controller
         // Prefer DB settings for dynamic control; fallback to env
         $homeControl = Setting::get('HOME_CONTROLL') ?? env('HOME_CONTROLL', 'home_one');
         // dd($homeControl);
-        if (in_array($homeControl, ['home_two', 'home_watch', 'home_market'], true)) {
+        if (in_array($homeControl, ['home_two', 'home_watch', 'home_market', 'home_modern'], true)) {
             $limit = (int) (Setting::get('home_two_featured_limit') ?? 10);
             $catsCsv = (string) (Setting::get('home_two_featured_cats') ?? '');
             $catIds = array_values(array_filter(array_map('intval', explode(',', $catsCsv))));
@@ -81,6 +81,9 @@ class WebsiteController extends Controller
             }
             if ($homeControl === 'home_market') {
                 return view('website.home_market', compact('slug', 'topProducts', 'slides', 'featuredCats', 'initialProducts', 'limit'));
+            }
+            if ($homeControl === 'home_modern') {
+                return view('website.home_modern', compact('slug', 'topProducts', 'slides', 'featuredCats', 'initialProducts', 'limit'));
             }
 
             return view('website.home_two', compact('slug', 'topProducts', 'slides', 'featuredCats', 'initialProducts', 'limit'));
@@ -145,9 +148,9 @@ class WebsiteController extends Controller
         return view('website.home_one', compact('slug', 'topProducts', 'slides'));
     }
 
-    public function product($id)
+    public function product($slug)
     {
-        $product = Product::with('media', 'categories')->where('products.id', 'like', $id)->first();
+        $product = Product::with('media', 'categories')->where('products.productSlug', $slug)->firstOrFail();
         $relatedProducts = Product::with('media', 'categories')->where('products.id', '!=', $product->id)->limit(30)->get();
         return view('website.product', compact('product', 'relatedProducts'));
     }
@@ -171,7 +174,7 @@ class WebsiteController extends Controller
         }
 
         $productsQuery = Product::where('productName', 'like', "%{$query}%")
-            ->select('id', 'productName', 'productImage', 'productRegularPrice', 'productSalePrice');
+            ->select('id', 'productName', 'productSlug', 'productImage', 'productRegularPrice', 'productSalePrice');
 
         if (!empty($categoryId)) {
             $productsQuery->whereHas('categories', function($q) use ($categoryId) {
@@ -187,7 +190,7 @@ class WebsiteController extends Controller
                 'name' => $product->productName,
                 'image' => asset('/product/thumbnail/' . $product->productImage),
                 'price' => $product->productSalePrice > 0 ? $product->productSalePrice : $product->productRegularPrice,
-                'url' => url('/product/' . $product->id),
+                'url' => url('/product/' . $product->productSlug),
             ];
         });
 
@@ -235,7 +238,7 @@ class WebsiteController extends Controller
                      onmouseover="this.style.transform='translateY(-8px)'; this.classList.remove('shadow-sm'); this.classList.add('shadow-lg');"
                      onmouseout="this.style.transform='translateY(0)'; this.classList.add('shadow-sm'); this.classList.remove('shadow-lg');">
                     <div class="position-relative overflow-hidden rounded-top-3">
-                        <a href="<?php echo url('/product/' . $product->id) ?>" class="d-block bg-light">
+                        <a href="<?php echo url('/product/' . $product->productSlug) ?>" class="d-block bg-light">
                             <img class="img-fluid w-100 lazyload" 
                                  src="<?php echo asset('product/thumbnail/default.jpg') ?>" 
                                  data-src="<?php echo asset('/product/thumbnail/' . $product->productImage) ?>" 
@@ -255,7 +258,7 @@ class WebsiteController extends Controller
                     </div>
                     
                     <div class="card-body p-3 d-flex flex-column text-center">
-                        <a href="<?php echo url('/product/' . $product->id) ?>" class="text-decoration-none text-dark mb-2">
+                        <a href="<?php echo url('/product/' . $product->productSlug) ?>" class="text-decoration-none text-dark mb-2">
                             <h6 class="fw-bold text-truncate mb-0" style="font-size: 1rem; transition: color 0.2s;"
                                 onmouseover="this.style.color='#17a2b8';"
                                 onmouseout="this.style.color='inherit';"><?php echo $product->productName ?></h6>
@@ -304,7 +307,7 @@ class WebsiteController extends Controller
                       onmouseover="this.style.transform='translateY(-8px)'; this.classList.remove('shadow-sm'); this.classList.add('shadow-lg');" 
                       onmouseout="this.style.transform='translateY(0)'; this.classList.add('shadow-sm'); this.classList.remove('shadow-lg');"> 
                      <div class="position-relative overflow-hidden rounded-top-3"> 
-                         <a href="<?php echo url('/product/' . $product->id) ?>" class="d-block bg-light"> 
+                         <a href="<?php echo url('/product/' . $product->productSlug) ?>" class="d-block bg-light"> 
                              <img class="img-fluid w-100 lazyload" 
                                   src="<?php echo asset('product/thumbnail/default.jpg') ?>" 
                                   data-src="<?php echo asset('/product/thumbnail/' . $product->productImage) ?>" 
@@ -323,7 +326,7 @@ class WebsiteController extends Controller
                          </div> 
                          
                          <div class="card-body p-3 d-flex flex-column text-center"> 
-                             <a href="<?php echo url('/product/' . $product->id) ?>" class="text-decoration-none text-dark mb-2"> 
+                             <a href="<?php echo url('/product/' . $product->productSlug) ?>" class="text-decoration-none text-dark mb-2"> 
                                  <h6 class="fw-bold text-truncate mb-0" style="font-size: 1rem; transition: color 0.2s;" 
                                      onmouseover="this.style.color='#17a2b8';" 
                                      onmouseout="this.style.color='inherit';"><?php echo $product->productName ?></h6> 

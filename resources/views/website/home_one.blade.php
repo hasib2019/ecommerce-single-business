@@ -104,11 +104,11 @@
                     @foreach($topProducts as $product)
                             <div class="col-md-2 col-4 mb-4">
                                 <div class="card card-product-grid product-box-2 h-100">
-                                    <a href="{{ url('/product/'.$product->id)  }}" class="img-wrap">
+                                    <a href="{{ url('/product/'.$product->productSlug)  }}" class="img-wrap">
                                         <img class="img-fit lazyload" src="{{ asset('product/thumbnail/default.jpg') }}" data-src="{{ asset('/product/thumbnail/'.$product->productImage)  }}" alt="{{ $product->productName  }}">
                                     </a>
                                     <div class="card-body info-wrap">
-                                        <a href="{{ url('/product/'.$product->id)  }}" class="title text-truncate">{{ $product->productName  }}</a>
+                                        <a href="{{ url('/product/'.$product->productSlug)  }}" class="title text-truncate">{{ $product->productName  }}</a>
                                         <div class="price mt-auto text-center">
                                             {!! $product->htmlPrice() !!}
                                         </div>

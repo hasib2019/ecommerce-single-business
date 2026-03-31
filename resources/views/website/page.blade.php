@@ -20,11 +20,11 @@
                 @foreach($relatedProducts as $product)
                     <div class="col-md-2 col-6">
                         <div href="#" class="card card-product-grid product-box-2">
-                            <a href="{{ asset('/product/'.$product->id)  }}" class="img-wrap">
+                            <a href="{{ url('/product/'.$product->productSlug)  }}" class="img-wrap">
                                 <img class="img-fit lazyload"   src="{{ asset('/product/'.$product->productImage) }}"  data-src="{{ asset('/product/'.$product->productImage) }}" alt="{{ $product->productName  }}">
                             </a>
                             <figcaption class="info-wrap">
-                                <a href="{{ asset('/product/'.$product->productSlug)  }}" class="title text-truncate">{{ $product->productName  }}</a>
+                                <a href="{{ url('/product/'.$product->productSlug)  }}" class="title text-truncate">{{ $product->productName  }}</a>
                                 <div class="price mt-1 text-center">
                                     {!! $product->htmlPrice() !!}
                                 </div>

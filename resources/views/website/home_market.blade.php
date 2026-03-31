@@ -254,14 +254,14 @@
                         @foreach($topProducts as $product)
                             <div class="col-6 col-md-3 col-lg-2">
                                 <div class="card card-product-grid h-100">
-                                    <a href="{{ url('/product/'.$product->id) }}" class="img-wrap">
+                                    <a href="{{ url('/product/'.$product->productSlug) }}" class="img-wrap">
                                         <img class="img-fit lazyload"
                                              src="{{ asset('product/thumbnail/default.jpg') }}"
                                              data-src="{{ asset('/product/thumbnail/'.$product->productImage) }}"
                                              alt="{{ $product->productName }}">
                                     </a>
                                     <div class="card-body text-center">
-                                        <a href="{{ url('/product/'.$product->id) }}" class="title text-truncate">
+                                        <a href="{{ url('/product/'.$product->productSlug) }}" class="title text-truncate">
                                             {{ $product->productName }}
                                         </a>
                                         <div class="price mt-1">
@@ -299,14 +299,14 @@
                             @foreach($products as $product)
                                 <div class="col-6 col-md-3 col-lg-2">
                                     <div class="card card-product-grid h-100">
-                                        <a href="{{ url('/product/'.$product->id) }}" class="img-wrap">
+                                        <a href="{{ url('/product/'.$product->productSlug) }}" class="img-wrap">
                                             <img class="img-fit lazyload"
                                                  src="{{ asset('product/thumbnail/default.jpg') }}"
                                                  data-src="{{ asset('/product/thumbnail/'.$product->productImage) }}"
                                                  alt="{{ $product->productName }}">
                                         </a>
                                         <div class="card-body text-center">
-                                            <a href="{{ url('/product/'.$product->id) }}" class="title text-truncate">
+                                            <a href="{{ url('/product/'.$product->productSlug) }}" class="title text-truncate">
                                                 {{ $product->productName }}
                                             </a>
                                             <div class="price mt-1">

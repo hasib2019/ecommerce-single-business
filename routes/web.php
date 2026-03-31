@@ -24,7 +24,7 @@ Route::get('/test2', function() {
 });
 
 Route::get('/', [\App\Http\Controllers\WebsiteController::class, 'index'])->name('home');
-Route::get('/product/{id}', [\App\Http\Controllers\WebsiteController::class, 'product'])->name('product');
+Route::get('/product/{slug}', [\App\Http\Controllers\WebsiteController::class, 'product'])->where('slug', '[A-Za-z0-9\\-]+')->name('product');
 Route::get('/category/{slug}', [\App\Http\Controllers\WebsiteController::class, 'category'])->name('category');
 Route::get('/page/{slug}', [\App\Http\Controllers\WebsiteController::class, 'page'])->name('page');
 Route::get('/shop', [\App\Http\Controllers\WebsiteController::class, 'shop'])->name('shop');

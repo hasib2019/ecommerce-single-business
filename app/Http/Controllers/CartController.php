@@ -109,6 +109,7 @@ class CartController extends Controller
     public function mini_cart()
     {
         $response['count'] = Cart::count();
+        $response['subtotal'] = Cart::subtotal('0','','');
         $response['data'] = Cart::content();
         return response()->json($response, 200);
     }
