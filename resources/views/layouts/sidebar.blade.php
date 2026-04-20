@@ -68,6 +68,9 @@
                         <li class="{{ (request()->is('admin/slider')) ? 'active' : '' }}">
                             <a href="{{url('admin/slider ')}}" class="{{ (request()->is('admin/slider')) ? 'active' : '' }}">Slider</a>
                         </li>
+                        <li class="{{ (request()->is('admin/homepage*')) ? 'active' : '' }}">
+                            <a href="{{url('admin/homepage')}}" class="{{ (request()->is('admin/homepage*')) ? 'active' : '' }}">Homepage Sections</a>
+                        </li>
                         <li class="{{ (request()->is('admin/setting')) ? 'active' : '' }}">
                             <a href="{{url('admin/setting ')}}" class="{{ (request()->is('admin/setting')) ? 'active' : '' }}">Settings</a>
                         </li>

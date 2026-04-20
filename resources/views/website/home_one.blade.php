@@ -124,6 +124,12 @@
         </div><!-- container // -->
     </section>
     @endif
+
+    {{-- Dynamic homepage sections (Today's Deal, Banners, Flash Deals, etc.) --}}
+    @if(!empty($hpSections))
+        @include('website.homepage_sections')
+    @endif
+
     <section class="section-name bg padding-y-sm pt-0">
         <div class="container">
             <header class="section-heading mt-0 position-relative py-3 text-center">

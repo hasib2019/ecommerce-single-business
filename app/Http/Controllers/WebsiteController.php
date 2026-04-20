@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Category;
+use App\HomepageItem;
 use App\Page;
 use App\Product;
 use App\Slider;
@@ -20,6 +21,10 @@ class WebsiteController extends Controller
             $query->where('categories.categorySlug', 'like', $slug);
         })->inRandomOrder()->limit(12)->get();
         $slides = Slider::where('status', 'Active')->limit(3)->get();
+
+        // Load all active homepage section items (grouped for convenience)
+        $hpSections = $this->loadHomepageSections();
+
         // Prefer DB settings for dynamic control; fallback to env
         $homeControl = Setting::get('HOME_CONTROLL') ?? env('HOME_CONTROLL', 'home_one');
         // dd($homeControl);
@@ -77,16 +82,16 @@ class WebsiteController extends Controller
                     ->get();
             }
             if ($homeControl === 'home_watch') {
-                return view('website.home_watch', compact('slug', 'topProducts', 'slides', 'featuredCats', 'initialProducts', 'limit'));
+                return view('website.home_watch', compact('slug', 'topProducts', 'slides', 'featuredCats', 'initialProducts', 'limit', 'hpSections'));
             }
             if ($homeControl === 'home_market') {
-                return view('website.home_market', compact('slug', 'topProducts', 'slides', 'featuredCats', 'initialProducts', 'limit'));
+                return view('website.home_market', compact('slug', 'topProducts', 'slides', 'featuredCats', 'initialProducts', 'limit', 'hpSections'));
             }
             if ($homeControl === 'home_modern') {
-                return view('website.home_modern', compact('slug', 'topProducts', 'slides', 'featuredCats', 'initialProducts', 'limit'));
+                return view('website.home_modern', compact('slug', 'topProducts', 'slides', 'featuredCats', 'initialProducts', 'limit', 'hpSections'));
             }
 
-            return view('website.home_two', compact('slug', 'topProducts', 'slides', 'featuredCats', 'initialProducts', 'limit'));
+            return view('website.home_two', compact('slug', 'topProducts', 'slides', 'featuredCats', 'initialProducts', 'limit', 'hpSections'));
         } else if ($homeControl === 'home_three') {
             $limit = (int) (Setting::get('home_three_featured_limit') ?? 10);
             $catsCsv = (string) (Setting::get('home_three_featured_cats') ?? '');
@@ -141,11 +146,62 @@ class WebsiteController extends Controller
                     ->get();
             }
 
-            return view('website.home_three', compact('slug', 'topProducts', 'slides', 'featuredCats', 'initialProducts', 'limit'));
+            return view('website.home_three', compact('slug', 'topProducts', 'slides', 'featuredCats', 'initialProducts', 'limit', 'hpSections'));
         }
 
         // Default: home_one
-        return view('website.home_one', compact('slug', 'topProducts', 'slides'));
+        return view('website.home_one', compact('slug', 'topProducts', 'slides', 'hpSections'));
+    }
+
+    /**
+     * Load all active homepage section items, keyed by section name.
+     * Product-based sections load their products via the product_id relationship.
+     */
+    protected function loadHomepageSections(): array
+    {
+        $keys = [
+            'today_deal', 'banner_1', 'flash_deal', 'featured_product',
+            'banner_2', 'best_selling', 'new_product', 'banner_3',
+            'coupon', 'category_wise', 'classified', 'top_seller', 'top_brand',
+        ];
+
+        $productSections = HomepageItem::productSections();
+        $result = [];
+
+        foreach ($keys as $key) {
+            $items = HomepageItem::where('section', $key)
+                ->where('status', 'Active')
+                ->orderBy('sort_order')
+                ->get();
+
+            if (in_array($key, $productSections, true)) {
+                // Hydrate product relationships for product-based sections
+                $productIds = $items->pluck('product_id')->filter()->values();
+                if ($productIds->isNotEmpty()) {
+                    $products = Product::with('media', 'categories')
+                        ->whereIn('id', $productIds)
+                        ->get()
+                        ->keyBy('id');
+                    $items->each(function ($item) use ($products) {
+                        $item->setRelation('product', $products->get($item->product_id));
+                    });
+                }
+            }
+
+            if ($key === 'category_wise') {
+                $catIds = $items->pluck('category_id')->filter()->values();
+                if ($catIds->isNotEmpty()) {
+                    $cats = Category::whereIn('id', $catIds)->get()->keyBy('id');
+                    $items->each(function ($item) use ($cats) {
+                        $item->setRelation('category', $cats->get($item->category_id));
+                    });
+                }
+            }
+
+            $result[$key] = $items;
+        }
+
+        return $result;
     }
 
     public function product($slug)

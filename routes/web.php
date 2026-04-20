@@ -239,6 +239,19 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth', 'a
     Route::post('setting/getSlider', '\App\Http\Controllers\Admin\SettingController@getSlider')->name('getSlider');
      Route::resource('setting', '\App\Http\Controllers\Admin\SettingController');
 
+    // Homepage Section Settings
+    Route::get('homepage',                    '\App\Http\Controllers\Admin\HomepageController@index')->name('homepage.index');
+    Route::get('homepage/data',               '\App\Http\Controllers\Admin\HomepageController@sectionData')->name('homepage.data');
+    Route::post('homepage/status',            '\App\Http\Controllers\Admin\HomepageController@toggleStatus')->name('homepage.status');
+    Route::post('homepage/reorder',           '\App\Http\Controllers\Admin\HomepageController@reorder')->name('homepage.reorder');
+    Route::post('homepage/save-today-deal',   '\App\Http\Controllers\Admin\HomepageController@saveTodayDeal')->name('homepage.save-today-deal');
+    Route::post('homepage/save-banner',       '\App\Http\Controllers\Admin\HomepageController@saveBanner')->name('homepage.save-banner');
+    Route::post('homepage/save-sliders',      '\App\Http\Controllers\Admin\HomepageController@saveSliders')->name('homepage.save-sliders');
+    Route::post('homepage',                   '\App\Http\Controllers\Admin\HomepageController@store')->name('homepage.store');
+    Route::get('homepage/{id}',               '\App\Http\Controllers\Admin\HomepageController@show')->name('homepage.show');
+    Route::put('homepage/{id}',               '\App\Http\Controllers\Admin\HomepageController@update')->name('homepage.update');
+    Route::delete('homepage/{id}',            '\App\Http\Controllers\Admin\HomepageController@destroy')->name('homepage.destroy');
+
     // Patao Setup and Order routes
     Route::get('patao/setup', '\App\Http\Controllers\Admin\PataoController@setup')->name('patao.setup');
     Route::post('patao/setup', '\App\Http\Controllers\Admin\PataoController@setupSave')->name('patao.setup.save');
