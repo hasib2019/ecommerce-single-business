@@ -244,9 +244,15 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth', 'a
     Route::get('homepage/data',               '\App\Http\Controllers\Admin\HomepageController@sectionData')->name('homepage.data');
     Route::post('homepage/status',            '\App\Http\Controllers\Admin\HomepageController@toggleStatus')->name('homepage.status');
     Route::post('homepage/reorder',           '\App\Http\Controllers\Admin\HomepageController@reorder')->name('homepage.reorder');
-    Route::post('homepage/save-today-deal',   '\App\Http\Controllers\Admin\HomepageController@saveTodayDeal')->name('homepage.save-today-deal');
-    Route::post('homepage/save-banner',       '\App\Http\Controllers\Admin\HomepageController@saveBanner')->name('homepage.save-banner');
-    Route::post('homepage/save-sliders',      '\App\Http\Controllers\Admin\HomepageController@saveSliders')->name('homepage.save-sliders');
+    Route::post('homepage/save-today-deal',     '\App\Http\Controllers\Admin\HomepageController@saveTodayDeal')->name('homepage.save-today-deal');
+    Route::post('homepage/save-banner',         '\App\Http\Controllers\Admin\HomepageController@saveBanner')->name('homepage.save-banner');
+    Route::post('homepage/save-sliders',        '\App\Http\Controllers\Admin\HomepageController@saveSliders')->name('homepage.save-sliders');
+    Route::post('homepage/save-section-style',  '\App\Http\Controllers\Admin\HomepageController@saveSectionStyle')->name('homepage.save-section-style');
+    Route::post('homepage/save-banner-links',   '\App\Http\Controllers\Admin\HomepageController@saveBannerLinks')->name('homepage.save-banner-links');
+    Route::post('homepage/save-coupon-section', '\App\Http\Controllers\Admin\HomepageController@saveCouponSection')->name('homepage.save-coupon-section');
+    Route::post('homepage/save-category-wise',  '\App\Http\Controllers\Admin\HomepageController@saveCategoryWise')->name('homepage.save-category-wise');
+    Route::post('homepage/save-classified',     '\App\Http\Controllers\Admin\HomepageController@saveClassified')->name('homepage.save-classified');
+    Route::post('homepage/save-top-brands',     '\App\Http\Controllers\Admin\HomepageController@saveTopBrands')->name('homepage.save-top-brands');
     Route::post('homepage',                   '\App\Http\Controllers\Admin\HomepageController@store')->name('homepage.store');
     Route::get('homepage/{id}',               '\App\Http\Controllers\Admin\HomepageController@show')->name('homepage.show');
     Route::put('homepage/{id}',               '\App\Http\Controllers\Admin\HomepageController@update')->name('homepage.update');

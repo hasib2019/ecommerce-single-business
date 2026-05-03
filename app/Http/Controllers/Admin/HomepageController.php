@@ -184,6 +184,74 @@ class HomepageController extends Controller
         return response()->json(['status' => 'success', 'message' => 'Banner saved.']);
     }
 
+    /** Save section visual style (bg color, outline) for product-type sections. */
+    public function saveSectionStyle(Request $request)
+    {
+        $section = $request->input('section', '');
+        Setting::set("{$section}_bg_color",     $request->input('bg_color', '#ffffff'));
+        Setting::set("{$section}_use_outline",  $request->input('use_outline', '0'));
+        Setting::set("{$section}_outline_color", $request->input('outline_color', '#000000'));
+        return response()->json(['status' => 'success', 'message' => 'Settings saved.']);
+    }
+
+    /** Save banner link rows (up to 3) for banner_2 / banner_3 sections. */
+    public function saveBannerLinks(Request $request)
+    {
+        $section = $request->input('section', '');
+        $lang    = $request->input('lang', 'en');
+        $items   = array_values(array_filter($request->input('items', []), fn($i) => !empty($i['image'])));
+        Setting::set("{$section}_links_{$lang}", json_encode($items));
+        return response()->json(['status' => 'success', 'message' => 'Banner links saved.']);
+    }
+
+    /** Save coupon section settings per language. */
+    public function saveCouponSection(Request $request)
+    {
+        $lang = $request->input('lang', 'en');
+        Setting::set("coupon_bg_image_{$lang}",  $request->input('bg_image', ''));
+        Setting::set("coupon_bg_color_{$lang}",  $request->input('bg_color', '#000000'));
+        Setting::set("coupon_title_{$lang}",     $request->input('title', ''));
+        Setting::set("coupon_subtitle_{$lang}",  $request->input('subtitle', ''));
+        Setting::set("coupon_text_mode_{$lang}", $request->input('text_mode', 'dark'));
+        return response()->json(['status' => 'success', 'message' => 'Coupon section saved.']);
+    }
+
+    /** Save category wise section settings per language. */
+    public function saveCategoryWise(Request $request)
+    {
+        $lang = $request->input('lang', 'en');
+        Setting::set("category_wise_section_bg_{$lang}",   $request->input('section_bg', '#f2f4f5'));
+        Setting::set("category_wise_content_bg_{$lang}",   $request->input('content_bg', '#ffffff'));
+        Setting::set("category_wise_use_outline_{$lang}",  $request->input('use_outline', '0'));
+        Setting::set("category_wise_outline_color_{$lang}", $request->input('outline_color', '#000000'));
+        $cats = array_filter(array_map('intval', $request->input('cats', [])));
+        Setting::set("category_wise_cats_{$lang}", implode(',', $cats));
+        return response()->json(['status' => 'success', 'message' => 'Category Wise settings saved.']);
+    }
+
+    /** Save classifieds section settings per language. */
+    public function saveClassified(Request $request)
+    {
+        $lang = $request->input('lang', 'en');
+        Setting::set("classified_large_{$lang}",       $request->input('large_banner', ''));
+        Setting::set("classified_small_{$lang}",       $request->input('small_banner', ''));
+        Setting::set("classified_section_bg_{$lang}",  $request->input('section_bg', '#fff9ed'));
+        Setting::set("classified_use_outline_{$lang}", $request->input('use_outline', '0'));
+        Setting::set("classified_outline_color_{$lang}", $request->input('outline_color', '#000000'));
+        return response()->json(['status' => 'success', 'message' => 'Classifieds settings saved.']);
+    }
+
+    /** Save top brands settings. */
+    public function saveTopBrands(Request $request)
+    {
+        Setting::set('top_brand_bg_color',    $request->input('bg_color', '#f0f2f5'));
+        Setting::set('top_brand_use_outline', $request->input('use_outline', '0'));
+        Setting::set('top_brand_outline_color', $request->input('outline_color', '#000000'));
+        $cats = array_filter(array_map('intval', $request->input('cats', [])));
+        Setting::set('top_brand_selected_cats', implode(',', $cats));
+        return response()->json(['status' => 'success', 'message' => 'Top Brands settings saved.']);
+    }
+
     public function saveSliders(Request $request)
     {
         $slides = $request->input('slides', []);
