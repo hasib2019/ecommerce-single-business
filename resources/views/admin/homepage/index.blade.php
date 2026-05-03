@@ -73,6 +73,14 @@
         <div class="card" style="border-right: 2px solid #dee2e6;">
             <div class="card-body p-0">
                 <ul class="hp-nav-list" id="hp-nav">
+                    <li>
+                        <a href="javascript:void(0);"
+                           class="hp-nav-link"
+                           data-section="layout_template"
+                           style="border-bottom:1px solid #dee2e6; font-weight:600; color:#0d6efd;">
+                            <i class="fas fa-th-large me-1"></i> Layout / Template
+                        </a>
+                    </li>
                     @foreach($sections as $key => $label)
                     <li>
                         <a href="javascript:void(0);"
@@ -91,6 +99,55 @@
     <div class="col-md-10 col-lg-10">
         <div class="card">
             <div class="card-body">
+
+                {{-- ======================================================
+                     PANEL: LAYOUT / TEMPLATE
+                     ====================================================== --}}
+                @php $currentTemplate = \App\Setting::get('HOME_CONTROLL') ?? 'home_one'; @endphp
+                <div id="panel-layout_template" class="section-panel">
+                    <h5 class="fw-semibold mb-1">Homepage Layout / Template</h5>
+                    <p class="text-muted small mb-4">Choose how the homepage looks for your visitors. Changes take effect immediately after saving.</p>
+
+                    <div class="row g-3" id="template-cards">
+
+                        @php
+                        $templates = [
+                            'home_one'   => ['label' => 'Classic',       'desc' => 'Sidebar category menu + hero slider + sections.',           'icon' => 'fa-columns'],
+                            'home_two'   => ['label' => 'Modern Grid',   'desc' => 'Full-width slider + featured category product tabs.',        'icon' => 'fa-th'],
+                            'home_three' => ['label' => 'Three',         'desc' => 'Category grid layout with product tabs.',                    'icon' => 'fa-list-alt'],
+                            'home_market'=> ['label' => 'Market',        'desc' => 'Marketplace style with multi-category product grid.',        'icon' => 'fa-store'],
+                            'home_modern'=> ['label' => 'Ultra Modern',  'desc' => 'Clean, minimal layout for a premium shopping experience.',   'icon' => 'fa-magic'],
+                            'home_watch' => ['label' => 'Watch/Luxury',  'desc' => 'Dark-accent template for high-end or electronics stores.',   'icon' => 'fa-clock'],
+                            'home_linky' => ['label' => 'Linky Style',   'desc' => 'Category icon bar + horizontal product carousels + category-wise tabs. Inspired by linky.com.bd.', 'icon' => 'fa-rocket'],
+                        ];
+                        @endphp
+
+                        @foreach($templates as $tKey => $tInfo)
+                        <div class="col-6 col-md-4 col-lg-3">
+                            <label class="template-card d-block border rounded p-3 text-center cursor-pointer h-100
+                                {{ $currentTemplate === $tKey ? 'border-primary bg-light' : 'border-secondary' }}"
+                                style="cursor:pointer; transition:all .2s;">
+                                <input type="radio" name="homepage_template" value="{{ $tKey }}"
+                                       class="template-radio d-none"
+                                       {{ $currentTemplate === $tKey ? 'checked' : '' }}>
+                                <div class="mb-2" style="font-size:2rem; color:{{ $currentTemplate === $tKey ? '#0d6efd' : '#aaa' }};">
+                                    <i class="fas {{ $tInfo['icon'] }}"></i>
+                                </div>
+                                <div class="fw-semibold mb-1">{{ $tInfo['label'] }}</div>
+                                <small class="text-muted d-block">{{ $tInfo['desc'] }}</small>
+                                @if($currentTemplate === $tKey)
+                                <span class="badge bg-primary mt-2">Active</span>
+                                @endif
+                            </label>
+                        </div>
+                        @endforeach
+
+                    </div>
+
+                    <div class="text-right mt-4">
+                        <button type="button" class="btn btn-success px-5" id="btn-save-template">Save Layout</button>
+                    </div>
+                </div>
 
                 {{-- ======================================================
                      PANEL: HOME SLIDER  (DataTable – multiple slides)
@@ -919,6 +976,34 @@
                 } else {
                     toastr.error(res.message || 'Failed to save.');
                 }
+            },
+            error: function () { toastr.error('Server error.'); }
+        });
+    });
+
+    // ----------------------------------------------------------------
+    // Template selector – card highlight
+    // ----------------------------------------------------------------
+    $(document).on('change', '.template-radio', function () {
+        $('.template-card').removeClass('border-primary bg-light').addClass('border-secondary');
+        $('.template-card i').css('color', '#aaa');
+        $('.template-card .badge').remove();
+        var $lbl = $(this).closest('.template-card');
+        $lbl.addClass('border-primary bg-light').removeClass('border-secondary');
+        $lbl.find('i').css('color', '#0d6efd');
+        $lbl.append('<span class="badge bg-primary mt-2">Active</span>');
+    });
+
+    $('#btn-save-template').on('click', function () {
+        var tpl = $('input[name="homepage_template"]:checked').val();
+        if (!tpl) { toastr.warning('Please select a template.'); return; }
+        $.ajax({
+            url:  '{{ url('admin/homepage/save-template') }}',
+            type: 'POST',
+            data: { _token: csrfToken, template: tpl },
+            success: function (res) {
+                if (res.status === 'success') toastr.success(res.message);
+                else toastr.error(res.message || 'Failed to save.');
             },
             error: function () { toastr.error('Server error.'); }
         });

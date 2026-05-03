@@ -149,6 +149,10 @@ class WebsiteController extends Controller
             return view('website.home_three', compact('slug', 'topProducts', 'slides', 'featuredCats', 'initialProducts', 'limit', 'hpSections'));
         }
 
+        if ($homeControl === 'home_linky') {
+            return view('website.home_linky', compact('slug', 'topProducts', 'slides', 'hpSections'));
+        }
+
         // Default: home_one
         return view('website.home_one', compact('slug', 'topProducts', 'slides', 'hpSections'));
     }

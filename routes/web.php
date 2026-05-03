@@ -247,6 +247,7 @@ Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => ['auth', 'a
     Route::post('homepage/save-today-deal',     '\App\Http\Controllers\Admin\HomepageController@saveTodayDeal')->name('homepage.save-today-deal');
     Route::post('homepage/save-banner',         '\App\Http\Controllers\Admin\HomepageController@saveBanner')->name('homepage.save-banner');
     Route::post('homepage/save-sliders',        '\App\Http\Controllers\Admin\HomepageController@saveSliders')->name('homepage.save-sliders');
+    Route::post('homepage/save-template',       '\App\Http\Controllers\Admin\HomepageController@saveTemplate')->name('homepage.save-template');
     Route::post('homepage/save-section-style',  '\App\Http\Controllers\Admin\HomepageController@saveSectionStyle')->name('homepage.save-section-style');
     Route::post('homepage/save-banner-links',   '\App\Http\Controllers\Admin\HomepageController@saveBannerLinks')->name('homepage.save-banner-links');
     Route::post('homepage/save-coupon-section', '\App\Http\Controllers\Admin\HomepageController@saveCouponSection')->name('homepage.save-coupon-section');

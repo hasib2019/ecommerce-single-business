@@ -184,6 +184,18 @@ class HomepageController extends Controller
         return response()->json(['status' => 'success', 'message' => 'Banner saved.']);
     }
 
+    /** Save the active homepage template / layout. */
+    public function saveTemplate(Request $request)
+    {
+        $allowed = ['home_one', 'home_two', 'home_three', 'home_market', 'home_modern', 'home_watch', 'home_linky'];
+        $template = $request->input('template', 'home_one');
+        if (!in_array($template, $allowed, true)) {
+            return response()->json(['status' => 'error', 'message' => 'Invalid template.'], 422);
+        }
+        Setting::set('HOME_CONTROLL', $template);
+        return response()->json(['status' => 'success', 'message' => 'Homepage layout updated successfully.']);
+    }
+
     /** Save section visual style (bg color, outline) for product-type sections. */
     public function saveSectionStyle(Request $request)
     {
